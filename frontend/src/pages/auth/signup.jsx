@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import API from "../../api";
 
 export default function Signup() {
   const { t, i18n } = useTranslation();
 
   const [formData, setFormData] = useState({
-    fullName: "",
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
-    phone: "",
+    phone_no: "",
     role: "buyer",
     language: "en",
   });
@@ -38,27 +39,74 @@ export default function Signup() {
 };
 
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setError("");
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+      console.log(formData);
 
-    if (formData.password !== formData.confirmPassword) {
-      setError(t("passwordMismatch"));
-      return;
+  // Validate password match
+  if (formData.password !== formData.confirmPassword) {
+    setError(t("passwordMismatch"));
+    return;
+  }
+
+  formData.address = 'Address';
+
+  // Validate required fields
+  if (!formData.name || !formData.email || !formData.password || !formData.phone_no || !formData.address || !formData.role) {
+    setError("All fields are required");
+    return;
+  }
+
+  // Validate role
+  if (!['farmer', 'buyer'].includes(formData.role)) {
+    setError("Please select a valid role (Farmer or Buyer)");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const response = await API.post("/auth/register", {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      phone_no: formData.phone_no,
+      address: formData.address,
+      role: formData.role
+    });
+
+    const { token, user } = response.data;
+
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
+
+    setLoading(false);
+
+    // // Show success message (optional - you can use a toast library)
+    // Toast
+
+    // Redirect to login or dashboard
+    navigate("/pages/auth/login");
+
+  } catch (err) {
+    setLoading(false);
+
+    // Handle different error scenarios
+    if (err.response) {
+      // Server responded with error
+      setError(err.response.data.message || "Registration failed");
+    } else if (err.request) {
+      // Request made but no response
+      setError("Network error. Please check your connection.");
+    } else {
+      // Something else happened
+      setError("An unexpected error occurred. Please try again.");
     }
 
-    setLoading(true);
-
-    setTimeout(() => {
-      // Save full user info
-      localStorage.setItem("user", JSON.stringify(formData));
-      // Save role as a token
-      localStorage.setItem("roleToken", formData.role);
-
-      setLoading(false);
-      navigate("/pages/auth/login"); // Redirect to login after signup
-    }, 1000);
-  };
+    console.error("Registration error:", err);
+  }
+};
 
   return (
     <div
@@ -87,9 +135,9 @@ export default function Signup() {
                 </label>
                 <input
                   id="fullName"
-                  name="fullName"
+                  name="name"
                   type="text"
-                  value={formData.fullName}
+                  value={formData.name}
                   onChange={handleChange}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
@@ -121,9 +169,9 @@ export default function Signup() {
                 </label>
                 <input
                   id="phone"
-                  name="phone"
+                  name="phone_no"
                   type="text"
-                  value={formData.phone}
+                  value={formData.phone_no}
                   onChange={handleChange}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"

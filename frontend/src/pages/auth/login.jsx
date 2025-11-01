@@ -15,37 +15,62 @@ export default function Login() {
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
   setError("");
 
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (!user) {
-    setError(t("noAccount"));
-    return;
-  }
-
-  if (user.email !== formData.email || user.password !== formData.password) {
-    setError(t("invalidCredentials"));
+  // Validate required fields
+  if (!formData.email || !formData.password) {
+    setError("Email and password are required");
     return;
   }
 
   setLoading(true);
-  setTimeout(() => {
+
+  try {
+    const response = await API.post("/auth/login", {
+      email: formData.email,
+      password: formData.password
+    });
+
+    // Extract response data
+    const { token, user } = response.data;
+
+    // Store token and user info in localStorage
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
+
     setLoading(false);
 
-    // Get role from localStorage
-    const role = localStorage.getItem("roleToken");
-
-    // Redirect based on role
-    if (role === "buyer") {
+    // Redirect based on user role
+    if (user.role === "buyer") {
       navigate("/buyer/buyerMarketplace");
-    } else if (role === "farmer") {
+    } else if (user.role === "farmer") {
       navigate("/farmers/farmerDashboard");
+    } 
+
+  } catch (err) {
+    setLoading(false);
+
+    if (err.response) {
+      const status = err.response.status;
+      const message = err.response.data.message;
+
+      if (status === 401 || status === 400) {
+        setError(t("invalidCredentials") || message || "Invalid email or password");
+      } else if (status === 500) {
+        setError("Server error. Please try again later.");
+      } else {
+        setError(message || "Login failed. Please try again.");
+      }
+    } else if (err.request) {
+      setError("Network error. Please check your connection.");
     } else {
-      navigate("/"); // fallback
+      setError("An unexpected error occurred. Please try again.");
     }
-  }, 1000);
+
+    console.error("Login error:", err);
+  }
 };
 
 
