@@ -1,0 +1,116 @@
+{
+  "welcome": "Welcome to AgroLink",
+  "description": "We are creating a platform where farmers can plant and sell directly to buyers online.",
+  "login": "Login",
+  "signup": "Sign Up",
+  "createAccount": "Create Your Account",
+  "joinMarketplace": "Join the Farmers’ Marketplace",
+  "fullName": "Full Name",
+  "fullNamePlaceholder": "Enter your full name",
+  "emailAddress": "Email Address",
+  "emailPlaceholder": "your.email@example.com",
+  "phoneNumber": "Phone Number",
+  "phonePlaceholder": "03XXXXXXXXX",
+  "password": "Password",
+  "confirmPassword": "Confirm Password",
+  "role": "Role",
+  "buyer": "Buyer",
+  "farmer": "Farmer",
+  "language": "Language",
+  "english": "English",
+  "urdu": "Urdu",
+  "signUp": "Sign Up",
+  "creating": "Creating...",
+  "alreadyHaveAccount": "Already have an account?",
+  "loginHere": "Login here",
+  "passwordMismatch": "Passwords do not match.",
+  "welcomeBack": "Welcome Back!",
+  "loginDescription": "Login to continue to the marketplace",
+  "emailAddress": "Email Address",
+  "emailPlaceholder": "your.email@example.com",
+  "password": "Password",
+  "login": "Login",
+  "loggingIn": "Logging in...",
+  "noAccount": "Don’t have an account?",
+  "signUpHere": "Sign up here",
+  "invalidCredentials": "Invalid email or password.",
+  "buyersMarketplace": "Buyer's Marketplace",
+  "explore": "Explore",
+  "myCart": "My Cart",
+  "myOrders": "My Orders",
+  "account": "Account",
+  "loading": "Loading...",
+  "category": "Category",
+  "price": "Price",
+  "available": "Available",
+  "orderNow": "Order Now",
+  "addToCart": "Add to Cart",
+  "order": "Order",
+  "enterQuantity": "Enter quantity",
+  "confirm": "Confirm",
+  "cancel": "Cancel",
+  "orderPlaced": "✅ Order placed!",
+  "product": "Product",
+  "quantity": "Quantity",
+  "total": "Total",
+  "enterValidQuantity": "Please enter a valid quantity",
+  "addedToCart": "added to cart",
+  "categories": {
+    "All": "All",
+    "Fruits": "Fruits",
+    "Vegetables": "Vegetables",
+    "Grains": "Grains",
+    "Dairy Products": "Dairy Products",
+    "Other": "Other"
+  },
+  
+  "myOrders": "My Orders",
+  "noOrdersYet": "You haven’t placed any orders yet.",
+  "quantity": "Quantity",
+  "total": "Total",
+  "status": {
+    "Delivered": "Delivered",
+    "Pending": "Pending"
+  },
+  
+  "myCart": "My Cart",
+  "cartEmpty": "Your cart is empty.",
+  "remove": "Remove",
+  "total": "Total",
+  "proceedToCheckout": "Proceed to Checkout",
+  
+  "buyerAccount": "Buyer Account",
+  "basicInfo": "Basic Info",
+  "name": "Name",
+  "email": "Email",
+  "phone": "Phone",
+  "address": "Address",
+  "orderHistory": "Order History",
+  "wishlist": "Wishlist",
+  "paymentMethods": "Payment Methods",
+  "editInfo": "Edit Info",
+  "saveChanges": "Save Changes",
+  "delivered": "Delivered",
+  "pending": "Pending",
+  
+  "checkout": "Checkout",
+  "name": "Name",
+  "email": "Email",
+  "phone": "Phone",
+  "address": "Address",
+  "placeOrder": "Place Order",
+  "orderPlaced": "Order placed successfully!"
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
