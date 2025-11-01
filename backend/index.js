@@ -7,6 +7,8 @@ const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const profileRoutes = require('./routes/profileRoutes');
 
 dotenv.config();
 const app = express();
@@ -19,6 +21,8 @@ app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/profile', profileRoutes);
 
 app.use((req, res) => { // Middleware for catching any errors whatsoever
   res.status(404).json({ message: 'Route not found' });
