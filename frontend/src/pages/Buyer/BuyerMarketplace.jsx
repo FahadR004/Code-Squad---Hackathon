@@ -80,9 +80,9 @@ export default function BuyerMarketplace() {
             )}
           </div>
 
-          <button onClick={() => navigate("/cart")} className="hover:text-yellow-300">My Cart</button>
-          <button onClick={() => navigate("/orders")} className="hover:text-yellow-300">My Orders</button>
-          <button onClick={() => navigate("/account")} className="hover:text-yellow-300">Account</button>
+          <button onClick={() => navigate("/buyer/buyerMarketplace/cart")} className="hover:text-yellow-300">My Cart</button>
+          <button onClick={() => navigate("/buyer/buyerMarketplace/orders")} className="hover:text-yellow-300">My Orders</button>
+          <button onClick={() => navigate("/buyer/buyerMarketplace/account")} className="hover:text-yellow-300">Account</button>
         </div>
       </nav>
 
