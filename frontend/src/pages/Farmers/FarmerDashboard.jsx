@@ -1,37 +1,12 @@
 import React, { useState, useEffect } from "react";
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  BarChart,
-  Bar,
-} from "recharts";
 
 export default function FarmerDashboard() {
   const [data, setData] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState("October");
-  const totalStock = data.stock_status.reduce((sum, item) => sum + item.quantity, 0);
-
-const stockStatusPercent = data.stock_status.map(item => ({
-  status: item.status,
-  percentage: ((item.quantity / totalStock) * 100).toFixed(1), // keep 1 decimal
-}));
-
-
 
   useEffect(() => {
-    // Simulated data
     const dashboardData = {
-      products_by_category: {
-        Fruits: 10,
-        Vegetables: 15,
-        Grains: 8,
-        Dairy: 5,
-      },
+      products_by_category: { Fruits: 10, Vegetables: 15, Grains: 8, Dairy: 5 },
       total_orders_year: 320,
       recent_orders: [
         { id: 1, product: "Apple", quantity: 10, status: "Delivered" },
@@ -40,70 +15,16 @@ const stockStatusPercent = data.stock_status.map(item => ({
       ],
       total_revenue: 120000,
       monthly_sales: {
-        January: [
-    { day: "Week 1", revenue: 5000 },
-    { day: "Week 2", revenue: 7000 },
-    { day: "Week 3", revenue: 6000 },
-    { day: "Week 4", revenue: 8000 },
-  ],
-  February: [
-    { day: "Week 1", revenue: 6000 },
-    { day: "Week 2", revenue: 6500 },
-    { day: "Week 3", revenue: 7000 },
-    { day: "Week 4", revenue: 7500 },
-  ],
-  March: [
-    { day: "Week 1", revenue: 8000 },
-    { day: "Week 2", revenue: 8500 },
-    { day: "Week 3", revenue: 9000 },
-    { day: "Week 4", revenue: 9500 },
-  ],
-  April: [
-    { day: "Week 1", revenue: 10000 },
-    { day: "Week 2", revenue: 11000 },
-    { day: "Week 3", revenue: 12000 },
-    { day: "Week 4", revenue: 13000 },
-  ],
-  May: [
-    { day: "Week 1", revenue: 14000 },
-    { day: "Week 2", revenue: 14500 },
-    { day: "Week 3", revenue: 15000 },
-    { day: "Week 4", revenue: 15500 },
-  ],
-  June: [
-    { day: "Week 1", revenue: 16000 },
-    { day: "Week 2", revenue: 16500 },
-    { day: "Week 3", revenue: 17000 },
-    { day: "Week 4", revenue: 17500 },
-  ],
-  July: [
-    { day: "Week 1", revenue: 18000 },
-    { day: "Week 2", revenue: 18500 },
-    { day: "Week 3", revenue: 19000 },
-    { day: "Week 4", revenue: 19500 },
-  ],
-  August: [
-    { day: "Week 1", revenue: 20000 },
-    { day: "Week 2", revenue: 20500 },
-    { day: "Week 3", revenue: 21000 },
-    { day: "Week 4", revenue: 21500 },
-  ],
         October: [
           { day: "Week 1", revenue: 10000 },
           { day: "Week 2", revenue: 15000 },
           { day: "Week 3", revenue: 20000 },
           { day: "Week 4", revenue: 25000 },
         ],
-        September: [
-          { day: "Week 1", revenue: 8000 },
-          { day: "Week 2", revenue: 12000 },
-          { day: "Week 3", revenue: 18000 },
-          { day: "Week 4", revenue: 22000 },
-        ],
       },
-      stockStatusPercent: [
-        { status: "In Stock", percentage: 94.1 },
-        { status: "Wasted", percentage: 5.9 },
+      stock_status: [
+        { status: "In Stock", quantity: 160 },
+        { status: "Wasted", quantity: 10 },
       ],
     };
 
@@ -111,6 +32,14 @@ const stockStatusPercent = data.stock_status.map(item => ({
   }, []);
 
   if (!data) return <div className="text-center mt-20">Loading...</div>;
+
+  // Calculations safe after data is loaded
+  const totalStock = data.stock_status.reduce((sum, item) => sum + item.quantity, 0);
+
+  const stockStatusPercent = data.stock_status.map(item => ({
+    status: item.status,
+    percentage: ((item.quantity / totalStock) * 100).toFixed(1),
+  }));
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -164,48 +93,37 @@ const stockStatusPercent = data.stock_status.map(item => ({
         </div>
 
         {/* Charts Section */}
-<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-  {/* Monthly Sales Chart */}
-  <div className="bg-white p-4 rounded shadow">
-    <div className="flex justify-between items-center mb-2">
-      <h3 className="font-semibold">Monthly Sales</h3>
-      <select
-        className="border rounded px-2 py-1"
-        value={selectedMonth}
-        onChange={(e) => setSelectedMonth(e.target.value)}
-      >
-        {Object.keys(data.monthly_sales).map((month) => (
-          <option key={month} value={month}>{month}</option>
-        ))}
-      </select>
-    </div>
-    <ResponsiveContainer width="100%" height={250}>
-      <LineChart data={data.monthly_sales[selectedMonth]}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="day" />
-        <YAxis />
-        <Tooltip />
-        <Line type="monotone" dataKey="revenue" stroke="#34d399" />
-      </LineChart>
-    </ResponsiveContainer>
-  </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Monthly Sales Chart */}
+          <div className="bg-white p-4 rounded shadow">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="font-semibold">Monthly Sales</h3>
+              <select
+                className="border rounded px-2 py-1"
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+              >
+                {Object.keys(data.monthly_sales).map((month) => (
+                  <option key={month} value={month}>{month}</option>
+                ))}
+              </select>
+            </div>
+          </div>
 
-  {/* Stock vs Wastage Chart */}
-  <div className="bg-white p-4 rounded shadow">
-    <h3 className="font-semibold mb-2">Stock Status</h3>
-    <ResponsiveContainer width="100%" height={250}>
-  <BarChart data={stockStatusPercent}>
-    <CartesianGrid strokeDasharray="3 3" />
-    <XAxis dataKey="status" />
-    <YAxis unit="%" />
-    <Tooltip formatter={(value) => `${value}%`} />
-    <Bar dataKey="percentage" fill="#facc15" />
-  </BarChart>
-</ResponsiveContainer>
-
-  </div>
-</div>
-
+          {/* Stock Status Chart */}
+          <div className="bg-white p-4 rounded shadow">
+            <h3 className="font-semibold mb-2">Stock Status</h3>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={stockStatusPercent}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="status" />
+                <YAxis unit="%" />
+                <Tooltip formatter={(value) => `${value}%`} />
+                <Bar dataKey="percentage" fill="#facc15" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </main>
     </div>
   );

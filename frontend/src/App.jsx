@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 import FarmerDashboard from "./pages/Farmers/FarmerDashboard";
 import BuyerMarketplace from "./pages/Buyer/BuyerMarketplace";
@@ -11,24 +13,26 @@ import Signup from "./pages/auth/Signup";
 import Home from "./pages/HomePage";
 
 export default function App() {
+  const { i18n } = useTranslation();
+
+  // Persist language across refresh
+  useEffect(() => {
+    const savedLang = localStorage.getItem("lang") || "en"; // fallback
+    i18n.changeLanguage(savedLang);
+  }, [i18n]);
+
   return (
     <BrowserRouter>
       <Routes>
-        {/* Default Home Route */}
         <Route path="/" element={<Home />} />
-
-        {/* Auth Routes */}
         <Route path="/pages/auth/login" element={<Login />} />
         <Route path="/pages/auth/signup" element={<Signup />} />
-
-        {/* Farmer and Buyer Routes */}
-        <Route path="/farmer/farmerDashboard" element={<FarmerDashboard />} />
+        <Route path="/farmers/farmerDashboard" element={<FarmerDashboard />} />
         <Route path="/buyer/buyerMarketplace" element={<BuyerMarketplace />} />
         <Route path="/buyer/buyerMarketplace/cart" element={<BuyerCart />} /> 
         <Route path="/buyer/buyerMarketplace/cart/Checkout" element={<Checkout />} /> 
         <Route path="/buyer/buyerMarketplace/orders" element={<BuyerOrders />} /> 
         <Route path="/buyer/buyerMarketplace/account" element={<BuyerAccount />} />
-
       </Routes>
     </BrowserRouter>
   );
