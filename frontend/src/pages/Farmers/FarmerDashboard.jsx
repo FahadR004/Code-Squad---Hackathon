@@ -1,37 +1,47 @@
+
+
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import {
   ResponsiveContainer,
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   Tooltip,
   CartesianGrid,
-  BarChart,
-  Bar,
 } from "recharts";
+
+// Hook to animate number counting
+function useCountUp(target, duration = 1000) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let start = 0;
+    const increment = target / (duration / 30);
+    const interval = setInterval(() => {
+      start += increment;
+      if (start >= target) {
+        setCount(target);
+        clearInterval(interval);
+      } else {
+        setCount(Math.floor(start));
+      }
+    }, 30);
+    return () => clearInterval(interval);
+  }, [target, duration]);
+
+  return count;
+}
 
 export default function FarmerDashboard() {
   const [data, setData] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState("October");
-  const totalStock = data.stock_status.reduce((sum, item) => sum + item.quantity, 0);
-
-const stockStatusPercent = data.stock_status.map(item => ({
-  status: item.status,
-  percentage: ((item.quantity / totalStock) * 100).toFixed(1), // keep 1 decimal
-}));
-
-
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
-    // Simulated data
     const dashboardData = {
-      products_by_category: {
-        Fruits: 10,
-        Vegetables: 15,
-        Grains: 8,
-        Dairy: 5,
-      },
+      products_by_category: { Fruits: 10, Vegetables: 15, Grains: 8, Dairy: 5 },
       total_orders_year: 320,
       recent_orders: [
         { id: 1, product: "Apple", quantity: 10, status: "Delivered" },
@@ -40,172 +50,248 @@ const stockStatusPercent = data.stock_status.map(item => ({
       ],
       total_revenue: 120000,
       monthly_sales: {
-        January: [
-    { day: "Week 1", revenue: 5000 },
-    { day: "Week 2", revenue: 7000 },
-    { day: "Week 3", revenue: 6000 },
-    { day: "Week 4", revenue: 8000 },
-  ],
-  February: [
-    { day: "Week 1", revenue: 6000 },
-    { day: "Week 2", revenue: 6500 },
-    { day: "Week 3", revenue: 7000 },
-    { day: "Week 4", revenue: 7500 },
-  ],
-  March: [
-    { day: "Week 1", revenue: 8000 },
-    { day: "Week 2", revenue: 8500 },
-    { day: "Week 3", revenue: 9000 },
-    { day: "Week 4", revenue: 9500 },
-  ],
-  April: [
-    { day: "Week 1", revenue: 10000 },
-    { day: "Week 2", revenue: 11000 },
-    { day: "Week 3", revenue: 12000 },
-    { day: "Week 4", revenue: 13000 },
-  ],
-  May: [
-    { day: "Week 1", revenue: 14000 },
-    { day: "Week 2", revenue: 14500 },
-    { day: "Week 3", revenue: 15000 },
-    { day: "Week 4", revenue: 15500 },
-  ],
-  June: [
-    { day: "Week 1", revenue: 16000 },
-    { day: "Week 2", revenue: 16500 },
-    { day: "Week 3", revenue: 17000 },
-    { day: "Week 4", revenue: 17500 },
-  ],
-  July: [
-    { day: "Week 1", revenue: 18000 },
-    { day: "Week 2", revenue: 18500 },
-    { day: "Week 3", revenue: 19000 },
-    { day: "Week 4", revenue: 19500 },
-  ],
-  August: [
-    { day: "Week 1", revenue: 20000 },
-    { day: "Week 2", revenue: 20500 },
-    { day: "Week 3", revenue: 21000 },
-    { day: "Week 4", revenue: 21500 },
-  ],
         October: [
           { day: "Week 1", revenue: 10000 },
           { day: "Week 2", revenue: 15000 },
           { day: "Week 3", revenue: 20000 },
           { day: "Week 4", revenue: 25000 },
         ],
-        September: [
-          { day: "Week 1", revenue: 8000 },
-          { day: "Week 2", revenue: 12000 },
-          { day: "Week 3", revenue: 18000 },
-          { day: "Week 4", revenue: 22000 },
-        ],
       },
-      stockStatusPercent: [
-        { status: "In Stock", percentage: 94.1 },
-        { status: "Wasted", percentage: 5.9 },
+      stock_status: [
+        { status: "In Stock", quantity: 160 },
+        { status: "Wasted", quantity: 10 },
       ],
     };
 
     setTimeout(() => setData(dashboardData), 800);
   }, []);
 
-  if (!data) return <div className="text-center mt-20">Loading...</div>;
+  const animatedTotals = {
+    fruits: useCountUp(data?.products_by_category.Fruits || 0),
+    vegetables: useCountUp(data?.products_by_category.Vegetables || 0),
+    grains: useCountUp(data?.products_by_category.Grains || 0),
+    dairy: useCountUp(data?.products_by_category.Dairy || 0),
+    orders: useCountUp(data?.total_orders_year || 0),
+    revenue: useCountUp(data?.total_revenue || 0),
+  };
+
+  if (!data)
+    return (
+      <div className="text-center mt-20 text-lg font-semibold animate-pulse">
+        Loading...
+      </div>
+    );
+
+  const totalStock = data.stock_status.reduce((sum, item) => sum + item.quantity, 0);
+  const stockStatusPercent = data.stock_status.map((item) => ({
+    status: item.status,
+    percentage: ((item.quantity / totalStock) * 100).toFixed(1),
+  }));
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gray-100 font-sans overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-64 bg-green-700 shadow-lg p-6">
-        <h2 className="text-xl font-bold mb-6 text-white">👨‍🌾 Farmer Dashboard</h2>
-        <ul className="space-y-3">
-          <li className="hover:text-white cursor-pointer">Overview</li>
-          <li className="hover:text-white cursor-pointer">Messages</li>
-          <li className="hover:text-white cursor-pointer">Orders</li>
-          <li className="hover:text-white cursor-pointer">Performance</li>
-          <li className="hover:text-white cursor-pointer">Settings</li>
-        </ul>
+      <aside
+        className={`bg-green-800 text-white p-6 flex flex-col transition-width duration-300 ease-in-out shadow-lg
+        ${sidebarOpen ? "w-56" : "w-16"}`}
+        aria-expanded={sidebarOpen}
+      >
+        <button
+          aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="mb-6 focus:outline-none self-end text-white hover:text-yellow-400"
+        >
+          {sidebarOpen ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
+        </button>
+
+        <h2
+          className={`text-lg font-bold mb-6 flex items-center gap-2 whitespace-nowrap truncate transition-opacity duration-500 ${
+            sidebarOpen ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          Farmer Dashboard
+        </h2>
+
+        <nav className="flex flex-col gap-3 text-sm font-medium opacity-90">
+          {[
+            { label: "Dash Board", path: "/farmers/farmerDashboard" },
+            { label: "ChatBox", path: "/farmers/chat" },
+            { label: "Orders", path: "/farmers/orders" },
+          ].map(({ label, path }) => (
+            <Link
+              key={label}
+              to={path}
+              title={label}
+              className={`cursor-pointer hover:text-yellow-400 truncate transition-colors ${
+                sidebarOpen ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              {label}
+            </Link>
+          ))}
+        </nav>
+
+        {sidebarOpen && (
+          <div className="mt-auto text-xs text-yellow-300 italic animate-pulse pt-10 select-none">
+            Connected to farm network
+          </div>
+        )}
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 space-y-6">
-        {/* Product Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {Object.entries(data.products_by_category).map(([category, count]) => (
-            <div key={category} className="bg-green-300 p-4 rounded shadow">
-              <p>{category}</p>
-              <h3 className="text-2xl font-bold">{count}</h3>
-            </div>
-          ))}
-        </div>
-
-        {/* Orders & Revenue */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-blue-100 p-4 rounded shadow">
-            <p>Total Orders This Year</p>
-            <h3 className="text-2xl font-bold">{data.total_orders_year}</h3>
-          </div>
-          <div className="bg-yellow-100 p-4 rounded shadow">
-            <p>Total Revenue</p>
-            <h3 className="text-2xl font-bold">PKR {data.total_revenue}</h3>
-          </div>
-          <div className="bg-white p-4 rounded shadow">
-            <p>Recent Orders</p>
-            <ul className="mt-2 space-y-1 text-sm">
-              {data.recent_orders.map((order) => (
-                <li key={order.id} className="flex justify-between">
-                  <span>{order.product} x {order.quantity}</span>
-                  <span className={order.status === "Cancelled" ? "text-red-500" : "text-green-600"}>
-                    {order.status}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        {/* Charts Section */}
-<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-  {/* Monthly Sales Chart */}
-  <div className="bg-white p-4 rounded shadow">
-    <div className="flex justify-between items-center mb-2">
-      <h3 className="font-semibold">Monthly Sales</h3>
-      <select
-        className="border rounded px-2 py-1"
-        value={selectedMonth}
-        onChange={(e) => setSelectedMonth(e.target.value)}
+      <main
+        className="flex-1 p-6 overflow-auto"
+        style={{
+          backgroundImage:
+            "url('https://plus.unsplash.com/premium_photo-1664527305901-a3c8bec62850?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=870')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backdropFilter: "blur(6px)",
+          WebkitBackdropFilter: "blur(6px)",
+        }}
       >
-        {Object.keys(data.monthly_sales).map((month) => (
-          <option key={month} value={month}>{month}</option>
-        ))}
-      </select>
-    </div>
-    <ResponsiveContainer width="100%" height={250}>
-      <LineChart data={data.monthly_sales[selectedMonth]}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="day" />
-        <YAxis />
-        <Tooltip />
-        <Line type="monotone" dataKey="revenue" stroke="#34d399" />
-      </LineChart>
-    </ResponsiveContainer>
-  </div>
+        {/* MAIN CONTAINER MADE TRANSPARENT */}
+        <div className="max-w-7xl mx-auto space-y-6 bg-white bg-opacity-40 backdrop-blur-sm rounded-md p-6 shadow-lg">
+          {/* Product Overview Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {[
+              { label: "Fruits", value: animatedTotals.fruits, bg: "bg-green-400 text-white" },
+              { label: "Vegetables", value: animatedTotals.vegetables, bg: "bg-green-400 text-white" },
+              { label: "Grains", value: animatedTotals.grains, bg: "bg-green-400 text-white" },
+              { label: "Dairy", value: animatedTotals.dairy, bg: "bg-green-400 text-white" },
+            ].map(({ label, value, bg }) => (
+              <div
+                key={label}
+                className={`${bg} rounded p-3 text-center font-semibold text-lg relative overflow-hidden cursor-default`}
+              >
+                <div className="absolute top-0 right-1 text-7xl font-extrabold text-white/20 animate-spin-slow select-none pointer-events-none">
+                  {label.charAt(0)}
+                </div>
+                <span>{label}</span>
+                <h3 className="text-3xl font-bold mt-1">{value}</h3>
+              </div>
+            ))}
+          </div>
 
-  {/* Stock vs Wastage Chart */}
-  <div className="bg-white p-4 rounded shadow">
-    <h3 className="font-semibold mb-2">Stock Status</h3>
-    <ResponsiveContainer width="100%" height={250}>
-  <BarChart data={stockStatusPercent}>
-    <CartesianGrid strokeDasharray="3 3" />
-    <XAxis dataKey="status" />
-    <YAxis unit="%" />
-    <Tooltip formatter={(value) => `${value}%`} />
-    <Bar dataKey="percentage" fill="#facc15" />
-  </BarChart>
-</ResponsiveContainer>
+          {/* Orders and Revenue */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="bg-blue-100 rounded p-4 border-l-4 border-blue-600 font-semibold text-blue-900 flex flex-col items-center justify-center cursor-default animate-shadowPulse">
+              <p>Total Orders This Year</p>
+              <h3 className="text-2xl font-bold mt-1">{animatedTotals.orders}</h3>
+            </div>
+            <div className="bg-yellow-100 rounded p-4 border-l-4 border-yellow-500 font-semibold text-yellow-900 flex flex-col items-center justify-center cursor-default animate-shadowPulse">
+              <p>Total Revenue</p>
+              <h3 className="text-2xl font-bold mt-1">PKR {animatedTotals.revenue.toLocaleString()}</h3>
+            </div>
+            <div className="bg-white rounded p-4 shadow-inner cursor-default select-none">
+              <p className="font-semibold mb-2">Recent Orders</p>
+              <ul className="text-sm space-y-1">
+                {data.recent_orders.map(({ id, product, quantity, status }) => (
+                  <li key={id} className="flex justify-between">
+                    <span>{product} x {quantity}</span>
+                    <span className={`font-semibold ${status === "Cancelled" ? "text-red-600" : "text-green-600 animate-pulse"}`}>
+                      {status}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
 
-  </div>
-</div>
+          {/* Chart area */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Monthly Sales */}
+            <div className="bg-white bg-opacity-50 rounded p-4 border border-green-300 cursor-default">
+              <div className="flex justify-between items-center mb-3">
+                <p className="font-semibold text-green-700">Monthly Sales</p>
+                <select
+                  className="border border-green-400 rounded text-sm px-2 py-1 focus:outline-none focus:ring-1 focus:ring-green-500"
+                  value={selectedMonth}
+                  onChange={e => setSelectedMonth(e.target.value)}
+                >
+                  {Object.keys(data.monthly_sales).map(month => (
+                    <option key={month} value={month}>{month}</option>
+                  ))}
+                </select>
+              </div>
+              <p className="text-sm text-center text-gray-400 italic select-none">
+                (Monthly Sales Chart coming soon...)
+              </p>
+            </div>
 
+            {/* Stock Status */}
+            <div className="bg-white bg-opacity-50 rounded p-4 border border-yellow-300 cursor-default">
+              <p className="font-semibold mb-3 text-yellow-700">Stock Status</p>
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={stockStatusPercent}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="status" />
+                  <YAxis unit="%" />
+                  <Tooltip formatter={value => `${value}%`} />
+                  <Bar dataKey="percentage" fill="#facc15" radius={[6,6,0,0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+        {/* Animate styles in JSX */}
+        <style>{`
+          @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+          .animate-spin-slow {
+            animation: spin-slow 30s linear infinite;
+          }
+
+          @keyframes pulseSlow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+          }
+          .animate-pulse {
+            animation: pulseSlow 2s ease-in-out infinite;
+          }
+
+          @keyframes shadowPulse {
+            0%, 100% {
+              box-shadow: 0 0 6px 1px rgba(0,0,0,0.15);
+            }
+            50% {
+              box-shadow: 0 0 15px 4px rgba(0,0,0,0.25);
+            }
+          }
+          .animate-shadowPulse {
+            animation: shadowPulse 3s infinite ease-in-out;
+          }
+
+          aside {
+            transition: width 0.3s ease-in-out;
+            overflow-x: hidden;
+          }
+        `}</style>
       </main>
     </div>
   );
