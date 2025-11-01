@@ -1,32 +1,35 @@
-import React, { useState } from "react"
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function Checkout() {
+  const { t } = useTranslation();
+
   const [buyerDetails, setBuyerDetails] = useState({
     name: "",
     email: "",
     phone: "",
     address: "",
-  })
+  });
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setBuyerDetails({ ...buyerDetails, [name]: value })
-  }
+    const { name, value } = e.target;
+    setBuyerDetails({ ...buyerDetails, [name]: value });
+  };
 
   const handlePlaceOrder = () => {
-    alert("Order placed successfully!")
-    // Here you can also call API to save the order
-  }
+    alert(t("orderPlaced"));
+    // You can also call an API to save the order here
+  };
 
   return (
     <div className="min-h-screen bg-green-50 p-6">
       <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-xl p-6">
-        <h2 className="text-3xl font-bold text-green-800 mb-6">🛒 Checkout</h2>
+        <h2 className="text-3xl font-bold text-green-800 mb-6">🛒 {t("checkout")}</h2>
 
         <div className="space-y-4">
           {["name", "email", "phone", "address"].map((field) => (
             <div key={field}>
-              <label className="block text-gray-700 font-medium capitalize">{field}</label>
+              <label className="block text-gray-700 font-medium capitalize">{t(field)}</label>
               <input
                 type="text"
                 name={field}
@@ -41,10 +44,10 @@ export default function Checkout() {
             onClick={handlePlaceOrder}
             className="w-full mt-4 bg-green-700 text-white py-3 rounded-lg hover:bg-green-800 text-lg font-semibold transition"
           >
-            Place Order
+            {t("placeOrder")}
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 }

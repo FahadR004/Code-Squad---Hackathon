@@ -1,22 +1,19 @@
-import React, { useState } from "react"
-import { FaTrash, FaShoppingCart } from "react-icons/fa"
-
-import { useNavigate } from "react-router-dom"
-
-
-
-
+import React, { useState } from "react";
+import { FaTrash, FaShoppingCart } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function BuyerCart() {
-  const navigate = useNavigate()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([
     { id: 1, name: "Fresh Tomatoes", price: 250, quantity: 2 },
     { id: 2, name: "Bananas", price: 220, quantity: 3 },
-  ])
+  ]);
 
   const handleRemove = (id) => {
-    setCartItems(cartItems.filter((item) => item.id !== id))
-  }
+    setCartItems(cartItems.filter((item) => item.id !== id));
+  };
 
   const handleQuantityChange = (id, delta) => {
     setCartItems(
@@ -25,23 +22,23 @@ export default function BuyerCart() {
           ? { ...item, quantity: Math.max(1, item.quantity + delta) }
           : item
       )
-    )
-  }
+    );
+  };
 
   const totalAmount = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
     0
-  )
+  );
 
   return (
     <div className="min-h-screen bg-green-50 p-6">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-3xl font-bold text-green-800 flex items-center gap-2 mb-6">
-          <FaShoppingCart /> My Cart
+          <FaShoppingCart /> {t("myCart")}
         </h2>
 
         {cartItems.length === 0 ? (
-          <p className="text-gray-500 text-lg">Your cart is empty.</p>
+          <p className="text-gray-500 text-lg">{t("cartEmpty")}</p>
         ) : (
           <div className="space-y-4">
             {cartItems.map((item) => (
@@ -51,7 +48,9 @@ export default function BuyerCart() {
               >
                 <div>
                   <p className="font-semibold text-gray-800 text-lg">{item.name}</p>
-                  <p className="text-gray-600 mt-1">PKR {item.price}</p>
+                  <p className="text-gray-600 mt-1">
+                    PKR {item.price}
+                  </p>
                   <div className="mt-2 flex items-center gap-2">
                     <button
                       onClick={() => handleQuantityChange(item.id, -1)}
@@ -76,7 +75,7 @@ export default function BuyerCart() {
                     onClick={() => handleRemove(item.id)}
                     className="text-red-500 hover:text-red-700 flex items-center gap-1"
                   >
-                    <FaTrash /> Remove
+                    <FaTrash /> {t("remove")}
                   </button>
                 </div>
               </div>
@@ -84,21 +83,22 @@ export default function BuyerCart() {
 
             {/* Total */}
             <div className="bg-white shadow-lg rounded-xl p-4 flex justify-between items-center">
-              <span className="text-xl font-semibold text-gray-700">Total:</span>
+              <span className="text-xl font-semibold text-gray-700">{t("total")}:</span>
               <span className="text-xl font-bold text-green-800">PKR {totalAmount}</span>
             </div>
 
             {/* Checkout Button */}
             <div className="text-right">
               <button
-              onClick={() => navigate("/buyer/buyerMarketplace/cart/checkout")}
-              className="bg-green-700 text-white px-6 py-3 rounded-lg hover:bg-green-800 text-lg font-semibold transition">
-                Proceed to Checkout
+                onClick={() => navigate("/buyer/buyerMarketplace/cart/checkout")}
+                className="bg-green-700 text-white px-6 py-3 rounded-lg hover:bg-green-800 text-lg font-semibold transition"
+              >
+                {t("proceedToCheckout")}
               </button>
             </div>
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }
