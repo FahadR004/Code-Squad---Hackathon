@@ -99,7 +99,7 @@ exports.getAllProducts = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const products = await Product.find(filter)
-      .populate('farmerId', 'name email phone_no address')
+      .populate('farmerId', 'name email phone_no address rating profileImage') // Include rating
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(Number(limit));
@@ -126,7 +126,7 @@ exports.getAllProducts = async (req, res) => {
 exports.getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id)
-      .populate('farmerId', 'name email phone_no address');
+      .populate('farmerId', 'name email phone_no address rating profileImage');
 
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });

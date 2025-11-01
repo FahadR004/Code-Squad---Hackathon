@@ -2,8 +2,11 @@ const express = require('express');
 const { connectDB } = require('./config/database')
 const dotenv = require('dotenv');
 const cors = require('cors');
+
+// Import routes
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 
 dotenv.config();
 const app = express();
@@ -15,6 +18,7 @@ app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 app.use((req, res) => { // Middleware for catching any errors whatsoever
   res.status(404).json({ message: 'Route not found' });

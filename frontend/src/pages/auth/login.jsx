@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import API from "../../api";
 
 export default function Login() {
   const { t } = useTranslation();
@@ -51,7 +52,7 @@ const handleSubmit = async (e) => {
 
   } catch (err) {
     setLoading(false);
-
+    console.log(err, 'ERROR ')
     if (err.response) {
       const status = err.response.status;
       const message = err.response.data.message;
