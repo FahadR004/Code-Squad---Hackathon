@@ -104,8 +104,119 @@
   
   "checkout": "Checkout",
   "placeOrder": "Place Order",
-  "orderPlaced": "Order placed successfully!"
+  "orderPlaced": "Order placed successfully!",
+  "Thank you for your purchase. You can view your orders below.":"Thank you for your purchase. You can view your orders below.",
+   "Go to My Orders": "Go to My Orders",
+   
+  "Order Summary": "Order Summary",
+  "Your cart is empty.": "Your cart is empty.",
+  "Remove": "Remove",
+  "Subtotal": "Subtotal",
+  "Tax (5%)": "Tax (5%)",
+  "Total": "Total",
+  "Payment Options": "Payment Options",
+  "Credit / Debit Card": "Credit / Debit Card",
+  "PayPal": "PayPal",
+  "Cash on Delivery": "Cash on Delivery",
+  "Pay PKR {{total}}": "Pay PKR {{total}}",
+
+  "OrdersManagement": "Orders Management",
+  "AddNewOrder": "Add New Order",
+  "Add": "Add",
+  "Cancel": "Cancel",
+  "OrderApproved": "Order #{{id}} approved!",
+  "InsufficientStock": "Insufficient {{product}} stock for Order #{{id}}",
+  "NewOrderAdded": "New order added!",
+  "Pending": "Pending",
+  "Approved": "Approved",
+  "Rejected": "Rejected",
+  "CheckUpdate": "Check & Update",
+  "NoAction": "No action",
+  "CurrentStockStatus": "Current Stock Status",
+  "SelectProduct": "Select Product",
+  "Quantity": "Quantity",
+  "OrderID": "Order ID",
+  "Product": "Product",
+  "Status": "Status",
+  "Action": "Action",
+  "Products": {
+    "Apple": "Apple",
+    "Milk": "Milk",
+    "Tomatoes": "Tomatoes",
+    "Bread": "Bread",
+    "Eggs": "Eggs",
+    "Cheese": "Cheese"
+  },
+  "DonateWaste": {
+    "Title": "Donate Your Waste Stock",
+    "Description": "Your waste stock is high. Help the environment by donating to NGOs or foundations.",
+    "DonateNow": "Donate Now",
+    "FormTitle": "Donate to {{ngo}}",
+    "Name": "Your Name",
+    "Email": "Email",
+    "Phone": "Phone Number",
+    "Category": "Select Category",
+    "Quantity": "Quantity",
+    "Instructions": "Pickup Instructions (optional)",
+    "Cancel": "Cancel",
+    "Submit": "Submit",
+    "SuccessTitle": "✅ Donation Successful!",
+    "SuccessMessage": "Thank you for donating {{quantity}} units of {{category}} to {{ngo}}.",
+    "WasteCategories": {
+      "Fruits": "Fruits",
+      "Vegetables": "Vegetables",
+      "Poultry": "Poultry",
+      "Grains": "Grains",
+      "Dairy": "Dairy",
+      "Sweeteners": "Sweeteners",
+      "Spices": "Spices",
+      "Produce": "Produce",
+      "Herbs": "Herbs"
+    }
+  },
+  "Chat": {
+    "Title": "Farmer-Buyer Chat",
+    "Settings": "Settings",
+    "Logout": "Logout",
+    "Farmer": "Farmer",
+    "Buyer": "Buyer",
+    "Typing": "{{user}} is typing...",
+    "Placeholder": "Type your message...",
+    "Send": "Send"
+  },
+   "Chat": {
+    "Title": "کسان-خریدار چیٹ",
+    "Settings": "ترتیبات",
+    "Logout": "لاگ آوٹ",
+    "Farmer": "کسان",
+    "Buyer": "خریدار",
+    "Typing": "{{user}} لکھ رہا ہے...",
+    "Placeholder": "اپنا پیغام لکھیں...",
+    "Send": "بھیجیں"
+  },
+  
+  "Farmer Dashboard": "Farmer Dashboard",
+  "Manage your products and track your farm performance": "Manage your products and track your farm performance",
+  "Products": "Products",
+  "Orders": "Orders",
+  "ChatBox": "ChatBox",
+  "Total Products": "Total Products",
+  "Total Orders": "Total Orders",
+  "Total Revenue": "Total Revenue",
+  "Total Stock": "Total Stock",
+  "In Stock": "In Stock",
+  "Low Stock": "Low Stock",
+  "Out of Stock": "Out of Stock",
+  "Failed to fetch dashboard data": "Failed to fetch dashboard data",
+  "Are you sure you want to delete this product?": "Are you sure you want to delete this product?",
+  "Product deleted successfully": "Product deleted successfully",
+  "Other": "Other",
+  "Connected to farm network": "Connected to farm network"
 }
+
+
+
+
 
 
 

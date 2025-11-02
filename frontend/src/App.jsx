@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import BuyerMarketplace from "./pages/Buyer/BuyerMarketplace";
 import BuyerCart from "./pages/Buyer/BuyerCart";
 import Checkout from "./pages/Buyer/checkout"; 
+import OrderSuccess from "./pages/Buyer/OrderSucess";
 import BuyerOrders from "./pages/Buyer/BuyerOrders"; 
 import BuyerAccount from "./pages/Buyer/BuyerAccount";
 import Login from "./pages/auth/login";
@@ -16,6 +17,10 @@ import Chat from "./pages/Farmers/Chat";
 import Orders from "./pages/Farmers/Orders.jsx";
 import Performance from "./pages/Farmers/Performance.jsx";
 import Settings from "./pages/Farmers/Settings.jsx";
+import DonateWastePage from "./pages/Farmers/DonateWastePage.jsx"
+
+import { CartProvider } from "./contexts/CartContext";
+import BuyerLayout from "./layouts/BuyerLayout";
 
 export default function App() {
   const { i18n } = useTranslation();
@@ -26,26 +31,32 @@ export default function App() {
   }, [i18n]);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/pages/auth/login" element={<Login />} />
-        <Route path="/pages/auth/signup" element={<Signup />} />
+    <CartProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/pages/auth/login" element={<Login />} />
+          <Route path="/pages/auth/signup" element={<Signup />} />
 
-        {/* Farmer routes */}
-        <Route path="/farmers/farmerDashboard" element={<FarmerDashboard />} />
-        <Route path="/farmers/chat" element={<Chat />} />
-        <Route path="/farmers/orders" element={<Orders />} />
-        <Route path="/farmers/performance" element={<Performance />} />
-        <Route path="/farmers/settings" element={<Settings />} />
+          {/* Farmer routes */}
+          <Route path="/farmers/farmerDashboard" element={<FarmerDashboard />} />
+          <Route path="/farmers/chat" element={<Chat />} />
+          <Route path="/farmers/orders" element={<Orders />} />
+          <Route path="/farmers/performance" element={<Performance />} />
+          <Route path="/farmers/settings" element={<Settings />} />
+          <Route path="/farmers/donate-waste" element={<DonateWastePage />} />
 
-        {/* Buyer routes */}
-        <Route path="/buyer/buyerMarketplace" element={<BuyerMarketplace />} />
-        <Route path="/buyer/buyerMarketplace/cart" element={<BuyerCart />} /> 
-        <Route path="/buyer/buyerMarketplace/cart/Checkout" element={<Checkout />} /> 
-        <Route path="/buyer/buyerMarketplace/orders" element={<BuyerOrders />} /> 
-        <Route path="/buyer/buyerMarketplace/account" element={<BuyerAccount />} />
-      </Routes>
-    </BrowserRouter>
+
+          {/* Buyer routes with Navbar */}
+          <Route path="/buyer/buyerMarketplace" element={<BuyerLayout><BuyerMarketplace /></BuyerLayout>} />
+          <Route path="/buyer/buyerMarketplace/cart" element={<BuyerLayout><BuyerCart /></BuyerLayout>} /> 
+          <Route path="/buyer/buyerMarketplace/cart/Checkout" element={<BuyerLayout><Checkout /></BuyerLayout>} /> 
+          <Route path="/buyer/buyerMarketplace/order-success" element={<BuyerLayout><OrderSuccess /></BuyerLayout>} />
+          <Route path="/buyer/buyerMarketplace/orders" element={<BuyerLayout><BuyerOrders /></BuyerLayout>} /> 
+          <Route path="/buyer/buyerMarketplace/account" element={<BuyerLayout><BuyerAccount /></BuyerLayout>} />
+          
+        </Routes>
+      </BrowserRouter>
+    </CartProvider>
   );
 }

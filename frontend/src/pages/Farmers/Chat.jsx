@@ -1,6 +1,7 @@
 
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 function App() {
   const [messages, setMessages] = useState([
@@ -117,7 +118,6 @@ function App() {
         backgroundPosition: 'center',
       }}
     >
-      {/* Chat Panel */}
       <div className="flex-1 flex justify-center items-center p-4">
         <div className="w-full max-w-lg h-4/5 flex flex-col bg-black bg-opacity-60 rounded-lg shadow-lg overflow-hidden md:max-w-2xl">
           
@@ -161,7 +161,7 @@ function App() {
               <div
                 key={msg.id}
                 className={`mb-3 p-3 rounded-lg max-w-3/4 transition hover:shadow-md cursor-pointer relative animate-fade-in ${
-                  msg.user === 'Farmer'
+                  msg.user === t('Chat.Farmer')
                     ? 'bg-blue-200 self-start'
                     : 'bg-orange-200 self-end ml-auto'
                 }`}
@@ -179,7 +179,7 @@ function App() {
                       onClick={saveEdit}
                       className="mt-1 px-2 py-1 bg-green-500 text-white rounded"
                     >
-                      Save
+                      {t('Chat.Send')}
                     </button>
                   </div>
                 ) : (
@@ -221,14 +221,14 @@ function App() {
               value={messageText}
               onChange={handleTyping}
               onKeyPress={handleKeyPress}
-              placeholder="Type your message..."
+              placeholder={t('Chat.Placeholder')}
               className="flex-1 p-2 border border-gray-300 rounded hover:border-green-500 focus:border-green-500 transition mr-3"
             />
             <button
               onClick={sendMessage}
               className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
             >
-              Send
+              {t('Chat.Send')}
             </button>
           </div>
         </div>
