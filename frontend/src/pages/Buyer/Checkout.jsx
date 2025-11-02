@@ -1,21 +1,23 @@
+// CheckoutPage.jsx
 import React, { useState } from "react";
 import { useCart } from "../../contexts/CartContext";
 import { FaCreditCard, FaPaypal, FaMoneyBillWave } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function CheckoutPage() {
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
   const [selectedPayment, setSelectedPayment] = useState("card");
   const navigate = useNavigate();
+  const { t } = useTranslation(); // initialize translation
 
   const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   const tax = subtotal * 0.05; // 5% tax example
-  const total = subtotal   + tax;
+  const total = subtotal + tax;
 
   const handlePayment = () => {
     clearCart();
     navigate("/buyer/buyerMarketplace/order-success");
-    //navigate("/buyer/buyerMarketplace/orders");
   };
 
   return (
@@ -23,9 +25,9 @@ export default function CheckoutPage() {
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Order Summary */}
         <div>
-          <h2 className="text-2xl font-bold mb-4">🛒 Order Summary</h2>
+          <h2 className="text-2xl font-bold mb-4">🛒 {t("Order Summary")}</h2>
           {cartItems.length === 0 ? (
-            <p className="text-gray-500">Your cart is empty.</p>
+            <p className="text-gray-500">{t("Your cart is empty.")}</p>
           ) : (
             <div className="space-y-4">
               {cartItems.map((item) => (
@@ -55,7 +57,7 @@ export default function CheckoutPage() {
                       onClick={() => removeFromCart(item.id)}
                       className="text-red-500 hover:text-red-700 flex items-center gap-1"
                     >
-                      <FaMoneyBillWave /> Remove
+                      <FaMoneyBillWave /> {t("Remove")}
                     </button>
                   </div>
                 </div>
@@ -64,15 +66,15 @@ export default function CheckoutPage() {
               {/* Total */}
               <div className="bg-white shadow rounded-lg p-4 space-y-2">
                 <div className="flex justify-between">
-                  <span>Subtotal:</span>
+                  <span>{t("Subtotal")}:</span>
                   <span>PKR {subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Tax (5%):</span>
+                  <span>{t("Tax (5%)")}:</span>
                   <span>PKR {tax.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between font-bold text-green-700 text-lg">
-                  <span>Total:</span>
+                  <span>{t("Total")}:</span>
                   <span>PKR {total.toFixed(2)}</span>
                 </div>
               </div>
@@ -82,7 +84,7 @@ export default function CheckoutPage() {
 
         {/* Payment Options */}
         <div>
-          <h2 className="text-2xl font-bold mb-4">💳 Payment Options</h2>
+          <h2 className="text-2xl font-bold mb-4">💳 {t("Payment Options")}</h2>
           <div className="bg-white shadow rounded-lg p-6 space-y-4">
             <label className={`flex items-center gap-3 p-3 border rounded cursor-pointer ${selectedPayment === "card" ? "border-green-500 bg-green-50" : ""}`}>
               <input
@@ -94,7 +96,7 @@ export default function CheckoutPage() {
                 className="hidden"
               />
               <FaCreditCard size={24} />
-              <span>Credit / Debit Card</span>
+              <span>{t("Credit / Debit Card")}</span>
             </label>
 
             <label className={`flex items-center gap-3 p-3 border rounded cursor-pointer ${selectedPayment === "paypal" ? "border-green-500 bg-green-50" : ""}`}>
@@ -107,7 +109,7 @@ export default function CheckoutPage() {
                 className="hidden"
               />
               <FaPaypal size={24} />
-              <span>PayPal</span>
+              <span>{t("PayPal")}</span>
             </label>
 
             <label className={`flex items-center gap-3 p-3 border rounded cursor-pointer ${selectedPayment === "cod" ? "border-green-500 bg-green-50" : ""}`}>
@@ -120,7 +122,7 @@ export default function CheckoutPage() {
                 className="hidden"
               />
               <FaMoneyBillWave size={24} />
-              <span>Cash on Delivery</span>
+              <span>{t("Cash on Delivery")}</span>
             </label>
 
             <button
@@ -128,7 +130,7 @@ export default function CheckoutPage() {
               className="w-full bg-green-700 text-white py-3 rounded-lg hover:bg-green-800 font-semibold text-lg mt-4 transition"
               disabled={cartItems.length === 0}
             >
-              Pay PKR {total.toFixed(2)}
+              {t("Pay PKR {{total}}", { total: total.toFixed(2) })}
             </button>
           </div>
         </div>

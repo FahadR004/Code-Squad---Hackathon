@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 function App() {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState(() => {
     const saved = localStorage.getItem('chatMessages');
     return saved ? JSON.parse(saved) : [];
@@ -101,18 +103,17 @@ function App() {
         backgroundPosition: 'center',
       }}
     >
-      {/* Chat Panel */}
       <div className="flex-1 flex justify-center items-center p-4">
         <div className="w-full max-w-lg h-4/5 flex flex-col bg-black bg-opacity-60 rounded-lg shadow-lg overflow-hidden md:max-w-2xl">
           {/* Navbar */}
           <nav className="flex justify-between items-center p-4 bg-green-500 text-white">
-            <h2 className="text-lg font-bold">Farmer-Buyer Chat</h2>
+            <h2 className="text-lg font-bold">{t('Chat.Title')}</h2>
             <div className="flex space-x-2">
               <button className="px-3 py-1 border border-white text-white hover:bg-white hover:text-green-500 rounded transition">
-                Settings
+                {t('Chat.Settings')}
               </button>
               <button className="px-3 py-1 border border-white text-white hover:bg-white hover:text-green-500 rounded transition">
-                Logout
+                {t('Chat.Logout')}
               </button>
             </div>
           </nav>
@@ -126,7 +127,7 @@ function App() {
               <div
                 key={msg.id}
                 className={`mb-3 p-3 rounded-lg max-w-3/4 transition hover:shadow-md cursor-pointer relative animate-fade-in ${
-                  msg.user === 'Farmer'
+                  msg.user === t('Chat.Farmer')
                     ? 'bg-blue-200 self-start'
                     : 'bg-orange-200 self-end ml-auto'
                 }`}
@@ -144,7 +145,7 @@ function App() {
                       onClick={saveEdit}
                       className="mt-1 px-2 py-1 bg-green-500 text-white rounded"
                     >
-                      Save
+                      {t('Chat.Send')}
                     </button>
                   </div>
                 ) : (
@@ -182,7 +183,7 @@ function App() {
           {/* Typing Indicator */}
           {isTyping && (
             <div className="p-3 italic text-gray-300 animate-pulse">
-              {currentUser === 'Farmer' ? 'Buyer' : 'Farmer'} is typing...
+              {t('Chat.Typing', { user: currentUser === 'Farmer' ? t('Chat.Buyer') : t('Chat.Farmer') })}
             </div>
           )}
 
@@ -193,22 +194,22 @@ function App() {
               onChange={(e) => setCurrentUser(e.target.value)}
               className="mr-3 p-2 border border-gray-300 rounded hover:border-green-500 focus:border-green-500 transition"
             >
-              <option value="Farmer">Farmer</option>
-              <option value="Buyer">Buyer</option>
+              <option value="Farmer">{t('Chat.Farmer')}</option>
+              <option value="Buyer">{t('Chat.Buyer')}</option>
             </select>
             <input
               type="text"
               value={messageText}
               onChange={handleTyping}
               onKeyPress={handleKeyPress}
-              placeholder="Type your message..."
+              placeholder={t('Chat.Placeholder')}
               className="flex-1 p-2 border border-gray-300 rounded hover:border-green-500 focus:border-green-500 transition mr-3"
             />
             <button
               onClick={sendMessage}
               className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
             >
-              Send
+              {t('Chat.Send')}
             </button>
           </div>
         </div>

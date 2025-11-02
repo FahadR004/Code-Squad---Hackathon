@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import API from '../../api';
-import { useCart } from "../../contexts/CartContext";
+import API from '../../api'
 
 export default function BuyerMarketplace() {
-  const { addToCart } = useCart();
   const { t } = useTranslation();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [quantity, setQuantity] = useState("");
   const [filter, setFilter] = useState("All");
+  const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -24,8 +25,13 @@ export default function BuyerMarketplace() {
       setLoading(true);
       setError("");
 
+      // Fetch all active products
       const response = await API.get("/products", {
-        params: { status: "active", page: 1, limit: 100 }
+        params: {
+          status: "active",
+          page: 1,
+          limit: 100 // Adjust based on your needs
+        }
       });
 
       const fetchedProducts = response.data.products;
@@ -72,32 +78,72 @@ export default function BuyerMarketplace() {
   const categories = ["All","Poultry","Dairy","Meat","Produce","Processed","Fruit","Spices","Herbs","Fiber","Beverages","Grains","Nuts","Sweeteners"];
 
   return (
-    <div className="p-6 bg-gradient-to-b from-green-50 to-green-100 min-h-screen">
-      {/* Error message */}
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 shadow-md">
-          {error}
-          <button onClick={fetchProducts} className="ml-4 underline font-semibold hover:text-red-900">Retry</button>
-        </div>
-      )}
+    <div className="min-h-screen bg-gray-50">
+      {/* Navbar */}
+      <nav className="bg-green-700 text-white px-6 py-4 flex justify-between items-center shadow-md relative">
+        <h1 className="text-2xl font-bold">🛒 {t("buyersMarketplace")}</h1>
 
-      {/* Loading */}
-      {loading ? (
-        <div className="text-center text-gray-500 mt-20 font-semibold text-lg">{t("loading")}...</div>
-      ) : filteredProducts.length === 0 ? (
-        <div className="text-center text-gray-500 mt-20 font-semibold text-lg">No products available</div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProducts.map((p) => (
-            <div
-              key={p._id}
-              className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 duration-300 border-t-4 border-green-500 overflow-hidden"
+        <div className="flex items-center gap-6 relative">
+          {/* Explore Button */}
+          <div className="relative">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="bg-green-600 px-4 py-2 rounded hover:bg-green-800 transition"
             >
-              <div className="relative">
-                <img
-                  src={p.images?.[0] || "https://images.unsplash.com/photo-1560493676-04071c5f467b"}
-                  alt={p.name}
-                  className="h-44 w-full object-cover"
+              🌿 {t("explore")}
+            </button>
+
+            {showFilters && (
+              <div className="absolute mt-2 bg-white text-black border rounded shadow-lg w-56 right-0 z-50">
+                {categories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => handleFilterChange(cat)}
+                    className={`block w-full text-left px-4 py-2 hover:bg-green-100 ${
+                      filter === cat ? "bg-green-200 font-semibold" : ""
+                    }`}
+                  >
+                    {t(`categories.${cat}`)}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <button onClick={() => navigate("/buyer/buyerMarketplace/cart")} className="hover:text-yellow-300">
+            {t("myCart")}
+          </button>
+          <button onClick={() => navigate("/buyer/buyerMarketplace/orders")} className="hover:text-yellow-300">
+            {t("myOrders")}
+          </button>
+          <button onClick={() => navigate("/buyer/buyerMarketplace/account")} className="hover:text-yellow-300">
+            {t("account")}
+          </button>
+        </div>
+      </nav>
+
+      {/* Products */}
+      <div className="p-6">
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
+            <button onClick={fetchProducts} className="ml-4 underline">Retry</button>
+          </div>
+        )}
+
+        {loading ? (
+          <div className="text-center text-gray-500 mt-20">{t("loading")}</div>
+        ) : filteredProducts.length === 0 ? (
+          <div className="text-center text-gray-500 mt-20">No products available</div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredProducts.map((p) => (
+              <div key={p._id} className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition">
+                {/* Product Image */}
+                <img 
+                  src={p.images?.[0] || "https://images.unsplash.com/photo-1560493676-04071c5f467b"} 
+                  alt={p.name} 
+                  className="h-40 w-full object-cover rounded mb-3" 
                 />
                 
                 <h3 className="text-lg font-semibold">{p.name}</h3>
@@ -117,59 +163,67 @@ export default function BuyerMarketplace() {
 
                 {/* Organic Badge */}
                 {p.organicCertified && (
-                  <span className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full shadow">
+                  <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded mt-2">
                     🌱 Organic
                   </span>
                 )}
+
+                {/* Quality Grade */}
                 {p.qualityGrade && (
-                  <span className="absolute top-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full shadow">
-                    Grade {p.qualityGrade}
+                  <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mt-2 ml-2">
+                    Grade: {p.qualityGrade}
                   </span>
                 )}
-              </div>
 
-              <div className="p-4">
-                <h3 className="text-lg font-bold text-gray-800 mb-1">{p.name}</h3>
-                <p className="text-sm text-gray-600 mb-1">
-                  Category: <span className="font-medium">{p.category}</span>
-                </p>
-                <p className="text-sm text-gray-600 mb-1">
-                  Price: <span className="font-medium">{p.price.currency} {p.price.amount}/{p.price.unit}</span>
-                </p>
-                <p className="text-sm text-gray-600 mb-1">
-                  Available: <span className="font-medium">{p.quantity}</span>
-                </p>
-
-                <p className="text-sm text-gray-700 mt-2">
-                  👨‍🌾 Farmer: {p.farmerId?.name || "Unknown"}{" "}
-                  {p.farmerId?.rating && (
-                    <span className="text-yellow-500 font-semibold">
-                      | ⭐ {p.farmerId.rating.average.toFixed(1)} ({p.farmerId.rating.count})
-                    </span>
-                  )}
-                </p>
-
-                <div className="flex gap-3 mt-4">
+                <div className="flex gap-2 mt-3">
                   <button
-                    onClick={() => {
-                      addToCart(p, 1);
-                      navigate("/buyer/buyerMarketplace/cart/Checkout");
-                    }}
-                    className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white py-2 rounded-lg font-semibold shadow hover:from-green-600 hover:to-green-700 transition transform hover:scale-105 justify-center flex items-center"
+                    onClick={() => setSelected(p)}
+                    className="w-1/2 bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
                   >
                     {t("orderNow")}
                   </button>
-
                   <button
-                    onClick={() => addToCart(p, 1)}
-                    className="flex-1 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white py-2 rounded-lg font-semibold shadow hover:from-yellow-500 hover:to-yellow-600 transition transform hover:scale-105 justify-center flex items-center"
+                    onClick={() => alert(`${p.name} ${t("addedToCart")}`)}
+                    className="w-1/2 bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600"
                   >
                     {t("addToCart")}
                   </button>
                 </div>
               </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Order Modal */}
+      {selected && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow w-80">
+            <h3 className="font-semibold mb-2 text-lg">{t("order")}: {selected.name}</h3>
+            <p className="text-sm text-gray-600 mb-2">
+              Available: {selected.quantity} {selected.price.unit}
+            </p>
+            <input
+              type="number"
+              min="1"
+              max={selected.quantity}
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              placeholder={t("enterQuantity")}
+              className="border w-full mb-3 px-3 py-2 rounded"
+            />
+            <p className="text-sm mb-3">
+              Total: {selected.price.currency} {(selected.price.amount * (quantity || 0)).toFixed(2)}
+            </p>
+            <div className="flex justify-between">
+              <button onClick={placeOrder} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                {t("confirm")}
+              </button>
+              <button onClick={() => setSelected(null)} className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
+                {t("cancel")}
+              </button>
             </div>
-          ))}
+          </div>
         </div>
       )}
     </div>

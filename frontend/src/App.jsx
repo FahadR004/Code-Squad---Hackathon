@@ -17,6 +17,7 @@ import Chat from "./pages/Farmers/Chat";
 import Orders from "./pages/Farmers/Orders.jsx";
 import Performance from "./pages/Farmers/Performance.jsx";
 import Settings from "./pages/Farmers/Settings.jsx";
+import DonateWastePage from "./pages/Farmers/DonateWastePage.jsx"
 
 import { CartProvider } from "./contexts/CartContext";
 import BuyerLayout from "./layouts/BuyerLayout";
@@ -43,6 +44,8 @@ export default function App() {
           <Route path="/farmers/orders" element={<Orders />} />
           <Route path="/farmers/performance" element={<Performance />} />
           <Route path="/farmers/settings" element={<Settings />} />
+          <Route path="/farmers/donate-waste" element={<DonateWastePage />} />
+
 
           {/* Buyer routes with Navbar */}
           <Route path="/buyer/buyerMarketplace" element={<BuyerLayout><BuyerMarketplace /></BuyerLayout>} />
@@ -51,6 +54,7 @@ export default function App() {
           <Route path="/buyer/buyerMarketplace/order-success" element={<BuyerLayout><OrderSuccess /></BuyerLayout>} />
           <Route path="/buyer/buyerMarketplace/orders" element={<BuyerLayout><BuyerOrders /></BuyerLayout>} /> 
           <Route path="/buyer/buyerMarketplace/account" element={<BuyerLayout><BuyerAccount /></BuyerLayout>} />
+          
         </Routes>
       </BrowserRouter>
     </CartProvider>
