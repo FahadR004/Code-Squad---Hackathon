@@ -15,6 +15,7 @@ export default function BuyerMarketplace() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -74,7 +75,7 @@ export default function BuyerMarketplace() {
     setQuantity("");
   };
 
-  const categories = ["All", "Fruits", "Vegetables", "Grains", "Dairy Products", "Other"];
+  const categories = ["All","Poultry","Dairy","Meat","Produce","Processed","Fruit","Spices","Herbs","Fiber","Beverages","Grains","Nuts","Sweeteners"];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -146,7 +147,7 @@ export default function BuyerMarketplace() {
                 />
                 
                 <h3 className="text-lg font-semibold">{p.name}</h3>
-                <p className="text-sm text-gray-600">{t("category")}: {t(`categories.${p.category}`)}</p>
+                <p className="text-sm text-gray-600">{t("category")}: {t(`categories.${p.category}`, { defaultValue: p.category.charAt(0).toUpperCase() + p.category.slice(1) })}</p>
                 <p className="text-sm text-gray-600">
                   {t("price")}: {p.price.currency} {p.price.amount}/{p.price.unit}
                 </p>

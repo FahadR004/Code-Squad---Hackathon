@@ -11,7 +11,6 @@
   "emailPlaceholder": "your.email@example.com",
   "phoneNumber": "Phone Number",
   "phonePlaceholder": "03XXXXXXXXX",
-  "password": "Password",
   "confirmPassword": "Confirm Password",
   "role": "Role",
   "buyer": "Buyer",
@@ -29,7 +28,6 @@
   "emailAddress": "Email Address",
   "emailPlaceholder": "your.email@example.com",
   "password": "Password",
-  "login": "Login",
   "loggingIn": "Logging in...",
   "noAccount": "Don’t have an account?",
   "signUpHere": "Sign up here",
@@ -49,25 +47,36 @@
   "enterQuantity": "Enter quantity",
   "confirm": "Confirm",
   "cancel": "Cancel",
-  "orderPlaced": "✅ Order placed!",
   "product": "Product",
-  "quantity": "Quantity",
   "total": "Total",
   "enterValidQuantity": "Please enter a valid quantity",
   "addedToCart": "added to cart",
   "categories": {
-    "All": "All",
+   "All": "All",
     "Fruits": "Fruits",
     "Vegetables": "Vegetables",
     "Grains": "Grains",
     "Dairy Products": "Dairy Products",
-    "Other": "Other"
+    "Other": "Other",
+    "poultry": "Poultry",
+    "dairy": "Dairy",
+    "meat": "Meat",
+    "produce": "Produce",
+    "processed": "Processed",
+    "fruit": "Fruit",
+    "fruits": "Fruits",
+    "spices": "Spices",
+    "herbs": "Herbs",
+    "fiber": "Fiber",
+    "beverages": "Beverages",
+    "grains": "Grains",
+    "nuts": "Nuts",
+    "sweeteners": "Sweeteners"
   },
   
   "myOrders": "My Orders",
   "noOrdersYet": "You haven’t placed any orders yet.",
   "quantity": "Quantity",
-  "total": "Total",
   "status": {
     "Delivered": "Delivered",
     "Pending": "Pending"
@@ -94,10 +103,6 @@
   "pending": "Pending",
   
   "checkout": "Checkout",
-  "name": "Name",
-  "email": "Email",
-  "phone": "Phone",
-  "address": "Address",
   "placeOrder": "Place Order",
   "orderPlaced": "Order placed successfully!"
 }

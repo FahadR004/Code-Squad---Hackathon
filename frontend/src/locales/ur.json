@@ -50,10 +50,8 @@
   "enterQuantity": "مقدار درج کریں",
   "confirm": "تصدیق کریں",
   "cancel": "منسوخ کریں",
-  "orderPlaced": "✅ آرڈر دیا گیا!",
   "product": "مصنوع",
   "quantity": "مقدار",
-  "total": "کل",
   "enterValidQuantity": "براہ کرم درست مقدار درج کریں",
   "addedToCart": "کارٹ میں شامل کیا گیا",
   "categories": {
@@ -62,18 +60,28 @@
     "Vegetables": "سبزیاں",
     "Grains": "اناج",
     "Dairy Products": "ڈیری مصنوعات",
-    "Other": "دیگر"
+    "Other": "دیگر",
+    "poultry": "پالنے",
+    "dairy": "ڈیری",
+    "meat": "گوشت",
+    "produce": "پیداوار",
+    "processed": "پروسیس شدہ",
+    "fruit": "پھل",
+    "fruits": "پھل",
+    "spices": "مصالحے",
+    "herbs": "جڑی بوٹیاں",
+    "fiber": "ریشہ",
+    "beverages": "مشروبات",
+    "grains": "اناج",
+    "nuts": "گری دار میوے",
+    "sweeteners": "مٹھاس دینے والے"  
   },
   
-  "myOrders": "میرے آرڈرز",
   "noOrdersYet": "آپ نے ابھی تک کوئی آرڈر نہیں دیا۔",
-  "quantity": "مقدار",
-  "total": "کل",
   "status": {
     "Delivered": "ڈیلیورڈ",
     "Pending": "زیر التواء"
   },
-  "myCart": "میرا کارٹ",
   "cartEmpty": "آپ کا کارٹ خالی ہے۔",
   "remove": "حذف کریں",
   "total": "کل",
@@ -94,10 +102,6 @@
   "pending": "زیر التوا",
   
   "checkout": "چیک آؤٹ",
-  "name": "نام",
-  "email": "ای میل",
-  "phone": "فون",
-  "address": "پتہ",
   "placeOrder": "آرڈر کریں",
   "orderPlaced": "آرڈر کامیابی سے دیا گیا!"
 }
