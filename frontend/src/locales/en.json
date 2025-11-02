@@ -195,23 +195,54 @@
     "Send": "بھیجیں"
   },
   
-  "Farmer Dashboard": "Farmer Dashboard",
-  "Manage your products and track your farm performance": "Manage your products and track your farm performance",
-  "Products": "Products",
-  "Orders": "Orders",
-  "ChatBox": "ChatBox",
-  "Total Products": "Total Products",
-  "Total Orders": "Total Orders",
-  "Total Revenue": "Total Revenue",
-  "Total Stock": "Total Stock",
-  "In Stock": "In Stock",
-  "Low Stock": "Low Stock",
-  "Out of Stock": "Out of Stock",
-  "Failed to fetch dashboard data": "Failed to fetch dashboard data",
-  "Are you sure you want to delete this product?": "Are you sure you want to delete this product?",
-  "Product deleted successfully": "Product deleted successfully",
-  "Other": "Other",
-  "Connected to farm network": "Connected to farm network"
+"dashboard_title": "Farmer Dashboard",
+  "dashboard_subtitle": "Manage your products and track your farm performance",
+
+  "overview": "Overview",
+  "all_products": "All Products",
+  "low_stock": "Low Stock",
+  
+  "total_products": "Total Products",
+  "total_orders": "Total Orders",
+  "total_revenue": "Total Revenue",
+  "total_stock": "Total Stock",
+  
+  "in_stock": "In Stock",
+  "low_stock_items": "Low Stock",
+  "out_of_stock": "Out of Stock",
+  
+  "products_available": "Products available",
+  "running_low": "Running low (<10 units)",
+  "needs_restocking": "Needs restocking",
+  
+  "view_details": "View Details →",
+  "restock_now": "Restock Now →",
+  
+  "product": "Product",
+  "category": "Category",
+  "price": "Price",
+  "stock_qty": "Stock Qty",
+  "stock_status": "Stock Status",
+  "actions": "Actions",
+  "edit": "Edit",
+  "delete": "Delete",
+  "view": "View",
+  
+  "out_of_stock_title": "Out of Stock - Urgent Action Required",
+  "out_of_stock_sub": "{{count}} products need immediate restocking",
+  "low_stock_title": "Low Stock - Action Recommended",
+  "low_stock_sub": "{{count}} products running low (less than 10 units)",
+  
+  "well_stocked_title": "All Products Well Stocked!",
+  "well_stocked_msg": "Your inventory is in great shape. Keep up the good work!",
+  
+  "connected_network": "Connected to farm network",
+  
+  "products": "Products",
+  "orders": "Orders",
+  "chatbox": "ChatBox",
+  "donate_waste": "Donate Waste",
+  "logout": "Logout"
 }
 
 

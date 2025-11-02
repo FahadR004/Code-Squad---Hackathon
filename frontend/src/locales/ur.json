@@ -141,14 +141,16 @@
   "Product": "پروڈکٹ",
   "Status": "حیثیت",
   "Action": "عمل",
-  "Products": {
-    "Apple": "سیب",
-    "Milk": "دودھ",
-    "Tomatoes": "ٹماٹر",
-    "Bread": "روٹی",
-    "Eggs": "انڈے",
-    "Cheese": "پنیر"
-  },
+  "product_names": {
+  "Apple": "سیب",
+  "Milk": "دودھ",
+  "Tomatoes": "ٹماٹر",
+  "Bread": "روٹی",
+  "Eggs": "انڈے",
+  "Cheese": "پنیر"
+},
+"Products": "مصنوعات",
+
   "DonateWaste": {
     "Title": "اپنے فضلے کا عطیہ دیں",
     "Description": "آپ کے فضلے کا ذخیرہ زیادہ ہے۔ NGOs یا فاؤنڈیشنز کو عطیہ دے کر ماحول کی مدد کریں۔",
@@ -176,23 +178,55 @@
       "Herbs": "جڑی بوٹیاں"
     }
   },
-  "Farmer Dashboard": "کسان ڈیش بورڈ",
-  "Manage your products and track your farm performance": "اپنے مصنوعات کا انتظام کریں اور فارم کی کارکردگی کو ٹریک کریں",
-  "Products": "مصنوعات",
-  "Orders": "آرڈرز",
-  "ChatBox": "چیٹ باکس",
-  "Total Products": "کل مصنوعات",
-  "Total Orders": "کل آرڈرز",
-  "Total Revenue": "کل آمدنی",
-  "Total Stock": "کل اسٹاک",
-  "In Stock": "اسٹاک میں",
-  "Low Stock": "کم اسٹاک",
-  "Out of Stock": "اسٹاک ختم",
-  "Failed to fetch dashboard data": "ڈیش بورڈ ڈیٹا حاصل کرنے میں ناکام",
-  "Are you sure you want to delete this product?": "کیا آپ واقعی اس مصنوع کو حذف کرنا چاہتے ہیں؟",
-  "Product deleted successfully": "مصنوع کامیابی کے ساتھ حذف ہوگئی",
-  "Other": "دیگر",
-  "Connected to farm network": "فارم نیٹ ورک سے جڑا ہوا"
+  
+  "dashboard_title": "کسان کا ڈیش بورڈ",
+  "dashboard_subtitle": "اپنے مصنوعات کا انتظام کریں اور اپنے فارم کی کارکردگی پر نظر رکھیں",
+
+  "overview": "جائزہ",
+  "all_products": "تمام مصنوعات",
+  "low_stock": "کم اسٹاک",
+
+  "total_products": "کل مصنوعات",
+  "total_orders": "کل آرڈرز",
+  "total_revenue": "کل آمدنی",
+  "total_stock": "کل اسٹاک",
+
+  "in_stock": "اسٹاک میں",
+  "low_stock_items": "کم اسٹاک",
+  "out_of_stock": "اسٹاک ختم",
+
+  "products_available": "دستیاب مصنوعات",
+  "running_low": "کم دستیاب (10 سے کم)",
+  "needs_restocking": "ری اسٹاک کی ضرورت ہے",
+
+  "view_details": "تفصیلات دیکھیں →",
+  "restock_now": "ابھی ری اسٹاک کریں →",
+
+  "product": "پروڈکٹ",
+  "category": "زمرہ",
+  "price": "قیمت",
+  "stock_qty": "اسٹاک کی مقدار",
+  "stock_status": "اسٹاک کی حالت",
+  "actions": "اعمال",
+  "edit": "ترمیم کریں",
+  "delete": "حذف کریں",
+  "view": "دیکھیں",
+
+  "out_of_stock_title": "اسٹاک ختم - فوری کارروائی درکار ہے",
+  "out_of_stock_sub": "{{count}} مصنوعات کو فوری ری اسٹاک کرنے کی ضرورت ہے",
+  "low_stock_title": "کم اسٹاک - کارروائی کی سفارش کی جاتی ہے",
+  "low_stock_sub": "{{count}} مصنوعات کم ہیں (10 یونٹس سے کم)",
+
+  "well_stocked_title": "تمام مصنوعات مناسب مقدار میں موجود ہیں!",
+  "well_stocked_msg": "آپ کا اسٹاک بہترین حالت میں ہے۔ اچھا کام جاری رکھیں!",
+
+  "connected_network": "فارم نیٹ ورک سے منسلک",
+
+  "products": "مصنوعات",
+  "orders": "آرڈرز",
+  "chatbox": "چیٹ باکس",
+  "donate_waste": "فضلہ عطیہ کریں",
+  "logout": "لاگ آؤٹ"
 
 
 }

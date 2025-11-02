@@ -72,30 +72,31 @@ export default function OrdersPage() {
   }
 
   function handleOrderCheck(orderId) {
-    setLoadingOrderId(orderId);
-    setTimeout(() => {
-      setOrders(prevOrders => {
-        return prevOrders.map(order => {
-          if (order.id === orderId && order.status === 'pending') {
-            const availableQty = stock[order.product] || 0;
-            if (availableQty >= order.quantity) {
-              setStock(prevStock => ({
-                ...prevStock,
-                [order.product]: availableQty - order.quantity,
-              }));
-              setNotification({ message: t('OrderApproved', { id: orderId }), type: 'success' });
-              return { ...order, status: 'approved' };
-            } else {
-              setNotification({ message: t('InsufficientStock', { product: PRODUCT_NAMES[order.product], id: orderId }), type: 'error' });
-              return { ...order, status: 'rejected' };
-            }
+  setLoadingOrderId(orderId);
+  setTimeout(() => {
+    setOrders(prevOrders => {
+      return prevOrders.map(order => {
+        if (order.id === orderId && order.status === 'pending') {
+          const availableQty = stock[order.product] || 0;
+          if (availableQty >= order.quantity) {
+            setStock(prevStock => ({
+              ...prevStock,
+              [order.product]: availableQty - order.quantity,
+            }));
+            setNotification({ message: t('OrderApproved', { id: orderId }), type: 'success' });
+            return { ...order, status: 'approved' };
+          } else {
+            setNotification({ message: t('InsufficientStock', { product: PRODUCT_NAMES[order.product], id: orderId }), type: 'error' });
+            return { ...order, status: 'rejected' };
           }
-          return order;
-        })
-      );
-      setLoadingOrderId(null);
-    }, 1000);
-  }
+        }
+        return order;
+      });
+    });
+    setLoadingOrderId(null);
+  }, 1000);
+}
+
 
   function handleAddOrder() {
     if (newOrder.product && newOrder.quantity > 0) {

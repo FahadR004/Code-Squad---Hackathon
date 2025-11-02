@@ -1,25 +1,47 @@
+
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 function App() {
-  const { t } = useTranslation();
-  const [messages, setMessages] = useState(() => {
-    const saved = localStorage.getItem('chatMessages');
-    return saved ? JSON.parse(saved) : [];
-  });
-  const [currentUser, setCurrentUser] = useState('Farmer');
+  const [messages, setMessages] = useState([
+    {
+      id: 1,
+      user: 'Farmer',
+      text: 'Hello! I have fresh apples today.',
+      timestamp: new Date().toLocaleTimeString(),
+      reactions: [],
+    },
+    {
+      id: 2,
+      user: 'Buyer',
+      text: 'Great! How much per kg?',
+      timestamp: new Date().toLocaleTimeString(),
+      reactions: [],
+    },
+    {
+      id: 3,
+      user: 'Farmer',
+      text: '50 PKR per kg.',
+      timestamp: new Date().toLocaleTimeString(),
+      reactions: [],
+    },
+    {
+      id: 4,
+      user: 'Buyer',
+      text: 'I will take 5 kg.',
+      timestamp: new Date().toLocaleTimeString(),
+      reactions: [],
+    },
+  ]);
+
   const [messageText, setMessageText] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState('');
   const [pickerOpen, setPickerOpen] = useState(null);
   const chatWindowRef = useRef(null);
 
   const emojis = ['👍', '❤️', '😂', '😮', '😢'];
-
-  useEffect(() => {
-    localStorage.setItem('chatMessages', JSON.stringify(messages));
-  }, [messages]);
 
   useEffect(() => {
     if (chatWindowRef.current) {
@@ -31,25 +53,18 @@ function App() {
     if (messageText.trim()) {
       const newMessage = {
         id: Date.now(),
-        user: currentUser,
+        user: 'Farmer',
         text: messageText,
         timestamp: new Date().toLocaleTimeString(),
         reactions: [],
       };
       setMessages([...messages, newMessage]);
       setMessageText('');
-      simulateTyping();
     }
-  };
-
-  const simulateTyping = () => {
-    setIsTyping(true);
-    setTimeout(() => setIsTyping(false), 2000);
   };
 
   const handleTyping = (e) => {
     setMessageText(e.target.value);
-    if (!isTyping) simulateTyping();
   };
 
   const handleKeyPress = (e) => {
@@ -105,15 +120,34 @@ function App() {
     >
       <div className="flex-1 flex justify-center items-center p-4">
         <div className="w-full max-w-lg h-4/5 flex flex-col bg-black bg-opacity-60 rounded-lg shadow-lg overflow-hidden md:max-w-2xl">
+          
           {/* Navbar */}
           <nav className="flex justify-between items-center p-4 bg-green-500 text-white">
-            <h2 className="text-lg font-bold">{t('Chat.Title')}</h2>
-            <div className="flex space-x-2">
-              <button className="px-3 py-1 border border-white text-white hover:bg-white hover:text-green-500 rounded transition">
-                {t('Chat.Settings')}
+            {/* Left: Farmer profile */}
+            <div className="flex items-center space-x-3">
+              <img
+                src="https://randomuser.me/api/portraits/men/75.jpg"
+                alt="Farmer"
+                className="w-8 h-8 rounded-full border-2 border-white"
+              />
+              <span className="font-semibold">Farmer</span>
+            </div>
+
+            {/* Right: Phone and Video Call icons */}
+            <div className="flex items-center space-x-3 text-white">
+              <button className="hover:text-gray-200 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round"
+                    d="M3 5h2l3.6 7.59-1.35 2.44a11.042 11.042 0 005.39 5.39l2.44-1.35L19 19v2a2 2 0 01-2 2h-1a16 16 0 01-11-11V7a2 2 0 012-2z" />
+                </svg>
               </button>
-              <button className="px-3 py-1 border border-white text-white hover:bg-white hover:text-green-500 rounded transition">
-                {t('Chat.Logout')}
+              <button className="hover:text-gray-200 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round"
+                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14m0-4v4m0 0l-6 3.5V6.5L15 10z" />
+                </svg>
               </button>
             </div>
           </nav>
@@ -180,23 +214,8 @@ function App() {
             ))}
           </div>
 
-          {/* Typing Indicator */}
-          {isTyping && (
-            <div className="p-3 italic text-gray-300 animate-pulse">
-              {t('Chat.Typing', { user: currentUser === 'Farmer' ? t('Chat.Buyer') : t('Chat.Farmer') })}
-            </div>
-          )}
-
           {/* Input Area */}
           <div className="flex p-3 bg-white bg-opacity-80 border-t border-gray-300 md:flex-row">
-            <select
-              value={currentUser}
-              onChange={(e) => setCurrentUser(e.target.value)}
-              className="mr-3 p-2 border border-gray-300 rounded hover:border-green-500 focus:border-green-500 transition"
-            >
-              <option value="Farmer">{t('Chat.Farmer')}</option>
-              <option value="Buyer">{t('Chat.Buyer')}</option>
-            </select>
             <input
               type="text"
               value={messageText}

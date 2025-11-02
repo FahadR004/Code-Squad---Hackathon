@@ -6,28 +6,39 @@ import { useTranslation } from "react-i18next";
 export default function BuyerLayout({ children }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const location = useLocation(); // get current path
+  const location = useLocation();
   const [showFilters, setShowFilters] = useState(false);
 
   const categories = ["All", "Fruits", "Vegetables", "Grains", "Dairy Products", "Other"];
 
   const handleExploreClick = () => {
     if (location.pathname !== "/buyer/buyerMarketplace") {
-      // Navigate to marketplace if not already there
       navigate("/buyer/buyerMarketplace");
-      setShowFilters(false); // don't show filters yet
+      setShowFilters(false);
     } else {
-      // If already on marketplace, toggle filters
       setShowFilters(!showFilters);
     }
+  };
+
+  const handleLogout = () => {
+    // optional: clear localStorage/sessionStorage if storing tokens
+    // localStorage.removeItem("token");
+    navigate("/"); // redirect to homepage
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navbar */}
       <nav className="bg-green-700 text-white px-6 py-4 flex justify-between items-center shadow-md relative">
-        <h1 className="text-2xl font-bold">🛒 {t("buyersMarketplace")}</h1>
+        {/* Left Section - Title */}
+        <h1
+          className="text-2xl font-bold cursor-pointer"
+          onClick={() => navigate("/buyer/buyerMarketplace")}
+        >
+          🛒 {t("buyersMarketplace")}
+        </h1>
 
+        {/* Right Section - Buttons */}
         <div className="flex items-center gap-6 relative">
           {/* Explore Button */}
           <div className="relative">
@@ -54,14 +65,31 @@ export default function BuyerLayout({ children }) {
             )}
           </div>
 
-          <button onClick={() => navigate("/buyer/buyerMarketplace/cart")} className="hover:text-yellow-300">
+          <button
+            onClick={() => navigate("/buyer/buyerMarketplace/cart")}
+            className="hover:text-yellow-300"
+          >
             {t("myCart")}
           </button>
-          <button onClick={() => navigate("/buyer/buyerMarketplace/orders")} className="hover:text-yellow-300">
+          <button
+            onClick={() => navigate("/buyer/buyerMarketplace/orders")}
+            className="hover:text-yellow-300"
+          >
             {t("myOrders")}
           </button>
-          <button onClick={() => navigate("/buyer/buyerMarketplace/account")} className="hover:text-yellow-300">
+          <button
+            onClick={() => navigate("/buyer/buyerMarketplace/account")}
+            className="hover:text-yellow-300"
+          >
             {t("account")}
+          </button>
+
+          {/* 🔴 Logout Button (Top Right) */}
+          <button
+            onClick={handleLogout}
+            className="bg-red-600 px-4 py-2 rounded hover:bg-red-700 transition font-semibold"
+          >
+            {t("logout")}
           </button>
         </div>
       </nav>
