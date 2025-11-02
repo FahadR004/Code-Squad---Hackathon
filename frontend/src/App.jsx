@@ -7,8 +7,8 @@ import BuyerCart from "./pages/Buyer/BuyerCart";
 import Checkout from "./pages/Buyer/checkout"; 
 import BuyerOrders from "./pages/Buyer/BuyerOrders"; 
 import BuyerAccount from "./pages/Buyer/BuyerAccount";
-import Login from "./pages/auth/Login";
-import Signup from "./pages/auth/Signup";
+import Login from "./pages/auth/login";
+import Signup from "./pages/auth/signup";
 import Home from "./pages/HomePage";
 
 import FarmerDashboard from "./pages/Farmers/FarmerDashboard";
