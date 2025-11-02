@@ -6,7 +6,7 @@ import API from "../../api";
 
 export default function BuyerOrders() {
   const { t } = useTranslation();
-  const { orders, setOrders } = useCart(); // Use orders from context
+  const { orders, setOrders } = useCart();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,7 +19,6 @@ export default function BuyerOrders() {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
 
-  // Fetch orders from backend
   useEffect(() => {
     fetchOrders();
   }, [statusFilter, currentPage]);
@@ -107,6 +106,13 @@ export default function BuyerOrders() {
     year: "numeric", month: "short", day: "numeric"
   });
 
+  const formatPrice = (price) => {
+    if (typeof price === 'object' && price !== null) {
+      return price.amount || 0;
+    }
+    return price || 0;
+  };
+
   if (loading) return <div className="min-h-screen bg-green-50 p-6 flex items-center justify-center"><FaSpinner className="animate-spin text-4xl text-green-600" /></div>;
 
   return (
@@ -136,7 +142,6 @@ export default function BuyerOrders() {
           <div className="grid grid-cols-1 gap-6">
             {orders.map(order => (
               <div key={order._id} className="bg-white shadow-lg rounded-xl p-6 hover:shadow-2xl transition-shadow duration-300">
-                {/* Header */}
                 <div className="flex justify-between items-start mb-4 pb-4 border-b">
                   <div>
                     <p className="text-sm text-gray-500">Order ID: {order._id}</p>
@@ -148,20 +153,18 @@ export default function BuyerOrders() {
                   </span>
                 </div>
 
-                {/* Farmer Info */}
                 <div className="mb-4">
                   <p className="text-gray-700 font-semibold">Farmer: {order.farmerId.name}</p>
                   <p className="text-sm text-gray-600">Contact: {order.farmerId.phone_no}</p>
                 </div>
 
-                {/* Items */}
                 <div className="mb-4">
                   <h4 className="font-semibold text-gray-700 mb-2">Items:</h4>
                   {order.items.map((item, i) => (
                     <div key={i} className="flex justify-between items-center py-2 border-b last:border-b-0">
                       <div>
                         <p className="font-medium">{item.name}</p>
-                        <p className="text-sm text-gray-600">{item.quantity} × PKR {item.price}/{item.unit}</p>
+                        <p className="text-sm text-gray-600">{item.quantity} × PKR {formatPrice(item.price)}/{item.unit}</p>
                       </div>
                       <p className="font-semibold">PKR {item.subtotal}</p>
                     </div>
@@ -174,7 +177,6 @@ export default function BuyerOrders() {
                   <p className="text-sm text-gray-600">Delivery: {order.deliveryAddress}</p>
                 </div>
 
-                {/* Actions */}
                 <div className="flex gap-2 flex-wrap">
                   {order.status === "pending" && <button onClick={() => handleCancelOrder(order._id)} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">Cancel Order</button>}
                   {order.status === "delivered" && !order.isReviewed && <button onClick={() => openRatingModal(order)} className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition flex items-center gap-2"><FaStar /> Rate Farmer</button>}
@@ -185,7 +187,6 @@ export default function BuyerOrders() {
           </div>
         )}
 
-        {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex justify-center gap-2 mt-6">
             <button onClick={() => setCurrentPage(prev => Math.max(1, prev-1))} disabled={currentPage===1} className="px-4 py-2 bg-green-600 text-white rounded disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-green-700">Previous</button>
@@ -195,7 +196,6 @@ export default function BuyerOrders() {
         )}
       </div>
 
-      {/* Rating Modal */}
       {showModal && selectedOrder && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-xl w-96 max-w-full mx-4">
