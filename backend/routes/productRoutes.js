@@ -12,12 +12,14 @@ const { protect, authorize } = require('../middleware/auth');
 
 // Public routes
 router.get('/', getAllProducts);
-router.get('/:id', getProductById);
 
-// Protected routes - Farmer only
+// Protected routes - Farmer only (MUST come before /:id)
 router.post('/', protect, authorize('farmer'), createProduct);
-router.get('/farmer/my-products', protect, authorize('farmer'), getMyProducts);
+router.get('/my-products', protect, authorize('farmer'), getMyProducts);  // MOVED UP & CHANGED
 router.put('/:id', protect, authorize('farmer'), updateProduct);
 router.delete('/:id', protect, authorize('farmer'), deleteProduct);
+
+// Parameterized routes (MUST come last)
+router.get('/:id', getProductById);
 
 module.exports = router;

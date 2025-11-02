@@ -14,6 +14,7 @@ export default function BuyerMarketplace() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -40,11 +41,35 @@ export default function BuyerMarketplace() {
 
   const handleFilterChange = (category) => {
     setFilter(category);
-    if (category === "All") setFilteredProducts(products);
-    else setFilteredProducts(products.filter((p) => p.category === category));
+    setShowFilters(false);
+    if (category === "All") {
+      setFilteredProducts(products);
+    } else {
+      setFilteredProducts(products.filter((p) => p.category === category));
+    }
   };
 
-  const categories = ["All", "Fruits", "Vegetables", "Grains", "Dairy Products", "Other"];
+  const placeOrder = () => {
+    if (!quantity || quantity <= 0) {
+      alert(t("enterValidQuantity"));
+      return;
+    }
+    
+    if (quantity > selected.quantity) {
+      alert(`Only ${selected.quantity} units available!`);
+      return;
+    }
+
+    alert(
+      `${t("orderPlaced")}\n${t("product")}: ${selected.name}\n${t("quantity")}: ${quantity}\n${t("total")}: ${selected.price.currency} ${
+        selected.price.amount * quantity
+      }`
+    );
+    setSelected(null);
+    setQuantity("");
+  };
+
+  const categories = ["All","Poultry","Dairy","Meat","Produce","Processed","Fruit","Spices","Herbs","Fiber","Beverages","Grains","Nuts","Sweeteners"];
 
   return (
     <div className="p-6 bg-gradient-to-b from-green-50 to-green-100 min-h-screen">
@@ -74,6 +99,23 @@ export default function BuyerMarketplace() {
                   alt={p.name}
                   className="h-44 w-full object-cover"
                 />
+                
+                <h3 className="text-lg font-semibold">{p.name}</h3>
+                <p className="text-sm text-gray-600">{t("category")}: {t(`categories.${p.category}`, { defaultValue: p.category.charAt(0).toUpperCase() + p.category.slice(1) })}</p>
+                <p className="text-sm text-gray-600">
+                  {t("price")}: {p.price.currency} {p.price.amount}/{p.price.unit}
+                </p>
+                <p className="text-sm text-gray-600">{t("available")}: {p.quantity}</p>
+                
+                {/* Farmer Info with Rating */}
+                <p className="text-sm text-gray-700 mt-1">
+                  👨‍🌾 {t("farmer")}: {p.farmerId?.name || "Unknown"} 
+                  {p.farmerId?.rating && (
+                    <span> | ⭐ {p.farmerId.rating.average.toFixed(1)} ({p.farmerId.rating.count})</span>
+                  )}
+                </p>
+
+                {/* Organic Badge */}
                 {p.organicCertified && (
                   <span className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full shadow">
                     🌱 Organic

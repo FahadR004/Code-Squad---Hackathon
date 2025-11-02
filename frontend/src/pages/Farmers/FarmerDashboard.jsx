@@ -1,19 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
+import { FaBox, FaShoppingCart, FaMoneyBillWave, FaWarehouse, FaSpinner } from "react-icons/fa";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell } from "recharts";
+import API from "../../api";
 
-// Hook to animate number counting
+// Hook for animated counting
 function useCountUp(target, duration = 1000) {
   const [count, setCount] = useState(0);
   useEffect(() => {
@@ -34,8 +25,11 @@ function useCountUp(target, duration = 1000) {
 }
 
 export default function FarmerDashboard() {
-  const [data, setData] = useState(null);
-  const [selectedMonth, setSelectedMonth] = useState("October");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [orderStats, setOrderStats] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [recentOrders, setRecentOrders] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
@@ -64,13 +58,79 @@ export default function FarmerDashboard() {
     setTimeout(() => setData(dashboardData), 800);
   }, []);
 
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+
+      // Fahad's API calls
+      const statsResponse = await API.get("orders/stats");
+      setOrderStats(statsResponse.data.stats);
+
+      const productsResponse = await API.get("products/farmer/my-products", { params: { limit: 100 } });
+      setProducts(productsResponse.data.products || []);
+
+      const ordersResponse = await API.get("orders/farmer-orders", { params: { limit: 5 } });
+      setRecentOrders(ordersResponse.data.orders || []);
+
+      setError(null);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to fetch dashboard data");
+      console.error("Dashboard fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Dashboard calculations
+  const getProductsByCategory = () => {
+    const categoryCounts = {};
+    products.forEach((product) => {
+      const category = product.category || "Other";
+      categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+    });
+    return categoryCounts;
+  };
+
+  const getStockStatus = () => {
+    let inStock = 0, lowStock = 0, outOfStock = 0;
+    products.forEach((product) => {
+      if (product.quantity === 0) outOfStock++;
+      else if (product.quantity < 10) lowStock++;
+      else inStock++;
+    });
+    return [
+      { status: "In Stock", quantity: inStock, color: "#22c55e" },
+      { status: "Low Stock", quantity: lowStock, color: "#eab308" },
+      { status: "Out of Stock", quantity: outOfStock, color: "#ef4444" }
+    ];
+  };
+
+  const getOrdersByStatus = () => {
+    if (!orderStats?.byStatus) return [];
+    return orderStats.byStatus.map((item) => ({
+      status: item._id.charAt(0).toUpperCase() + item._id.slice(1),
+      count: item.count,
+      revenue: item.totalRevenue
+    }));
+  };
+
+  const getTotalProducts = () => products.length;
+  const getTotalOrders = () => orderStats?.total || 0;
+  const getTotalRevenue = () => orderStats?.revenue || 0;
+  const getTotalStockQuantity = () => products.reduce((sum, p) => sum + (p.quantity || 0), 0);
+
+  const productsByCategory = getProductsByCategory();
+  const stockStatus = getStockStatus();
+  const ordersByStatus = getOrdersByStatus();
+
+  // Animated totals
   const animatedTotals = {
-    fruits: useCountUp(data?.products_by_category.Fruits || 0),
-    vegetables: useCountUp(data?.products_by_category.Vegetables || 0),
-    grains: useCountUp(data?.products_by_category.Grains || 0),
-    dairy: useCountUp(data?.products_by_category.Dairy || 0),
-    orders: useCountUp(data?.total_orders_year || 0),
-    revenue: useCountUp(data?.total_revenue || 0),
+    fruits: useCountUp(productsByCategory.Fruits || 0),
+    vegetables: useCountUp(productsByCategory.Vegetables || 0),
+    grains: useCountUp(productsByCategory.Grains || 0),
+    dairy: useCountUp(productsByCategory.Dairy || 0),
+    orders: useCountUp(getTotalOrders()),
+    revenue: useCountUp(getTotalRevenue()),
   };
 
   if (!data)
@@ -79,85 +139,68 @@ export default function FarmerDashboard() {
         Loading...
       </div>
     );
+  }
 
-  const totalStock = data.stock_status.reduce((sum, item) => sum + item.quantity, 0);
-  const stockStatusPercent = data.stock_status.map(item => ({
-    name: item.status,
-    value: item.quantity,
-  }));
-  const COLORS = ["#4ade80", "#f87171"]; // green for Used, red for Waste
+  if (error) {
+    return (
+      <div className="flex min-h-screen bg-gray-100 items-center justify-center">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded">{error}</div>
+      </div>
+    );
+  }
 
   return (
-    <div
-      className="flex min-h-screen font-sans overflow-hidden"
-      style={{
-        backgroundImage:
-          "url('https://images.unsplash.com/photo-1631535616112-91cd350b9801?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=774')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
+    <div className="flex min-h-screen font-sans overflow-hidden">
       {/* Sidebar */}
-      <aside
-        className={`bg-green-800 text-white p-6 flex flex-col transition-width duration-300 ease-in-out shadow-lg
-        ${sidebarOpen ? "w-56" : "w-16"}`}
-        aria-expanded={sidebarOpen}
-      >
+      <aside className={`bg-green-800 text-white p-6 flex flex-col transition-all duration-300 ease-in-out shadow-lg ${sidebarOpen ? "w-56" : "w-16"}`}>
         <button
           aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="mb-6 focus:outline-none self-end text-white hover:text-yellow-400"
         >
           {sidebarOpen ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           )}
         </button>
 
-        <h2
-          className={`text-lg font-bold mb-6 flex items-center gap-2 whitespace-nowrap truncate transition-opacity duration-500 ${
-            sidebarOpen ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          Farmer Dashboard
+        <h2 className={`text-lg font-bold mb-6 flex items-center gap-2 truncate transition-opacity duration-500 ${sidebarOpen ? "opacity-100" : "opacity-0"}`}>
+          👨‍🌾 Farmer Dashboard
         </h2>
 
         <nav className="flex flex-col gap-3 text-sm font-medium opacity-90">
-          {[
-            { label: "Dash Board", path: "/farmers/farmerDashboard" },
-            { label: "ChatBox", path: "/farmers/chat" },
-            { label: "Orders", path: "/farmers/orders" },
-          ].map(({ label, path }) => (
-            <Link
-              key={label}
-              to={path}
-              title={label}
-              className={`cursor-pointer hover:text-yellow-400 truncate transition-colors ${
-                sidebarOpen ? "opacity-100" : "opacity-0"
-              }`}
-            >
-              {label}
-            </Link>
-          ))}
+          <Link
+            to="/farmers/farmerDashboard"
+            className="flex items-center gap-2 cursor-pointer hover:text-yellow-400"
+          >
+            <FaBox />
+            <span className={`transition-all duration-300 ${sidebarOpen ? "opacity-100 w-auto ml-2" : "opacity-0 w-0 overflow-hidden"}`}>
+              Dashboard
+            </span>
+          </Link>
+          <Link
+            to="/farmers/chat"
+            className="flex items-center gap-2 cursor-pointer hover:text-yellow-400"
+          >
+            <FaShoppingCart />
+            <span className={`transition-all duration-300 ${sidebarOpen ? "opacity-100 w-auto ml-2" : "opacity-0 w-0 overflow-hidden"}`}>
+              ChatBox
+            </span>
+          </Link>
+          <Link
+            to="/farmers/orders"
+            className="flex items-center gap-2 cursor-pointer hover:text-yellow-400"
+          >
+            <FaMoneyBillWave />
+            <span className={`transition-all duration-300 ${sidebarOpen ? "opacity-100 w-auto ml-2" : "opacity-0 w-0 overflow-hidden"}`}>
+              Orders
+            </span>
+          </Link>
         </nav>
 
         {sidebarOpen && (
@@ -168,114 +211,96 @@ export default function FarmerDashboard() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 overflow-auto scale-90 flex justify-center">
-        {/* White Container Box */}
+      <main className="flex-1 p-6 overflow-auto">
         <div className="w-full max-w-7xl bg-white rounded-xl p-6 shadow-lg">
-          {/* Product Overview */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {[
-              { label: "Fruits", value: animatedTotals.fruits, bg: "bg-green-400 text-white" },
-              { label: "Vegetables", value: animatedTotals.vegetables, bg: "bg-green-400 text-white" },
-              { label: "Grains", value: animatedTotals.grains, bg: "bg-green-400 text-white" },
-              { label: "Dairy", value: animatedTotals.dairy, bg: "bg-green-400 text-white" },
-            ].map(({ label, value, bg }) => (
-              <div
-                key={label}
-                className={`${bg} rounded p-3 text-center font-semibold text-lg relative overflow-hidden cursor-default`}
-              >
-                <div className="absolute top-0 right-1 text-7xl font-extrabold text-white/20 animate-spin-slow select-none pointer-events-none">
-                  {label.charAt(0)}
+          {/* Top Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            {[{
+              label: "Total Products", value: getTotalProducts(), icon: <FaBox />, bg: "from-blue-400 to-blue-600"
+            }, {
+              label: "Total Orders", value: getTotalOrders(), icon: <FaShoppingCart />, bg: "from-green-400 to-green-600"
+            }, {
+              label: "Total Revenue", value: getTotalRevenue(), icon: <FaMoneyBillWave />, bg: "from-yellow-400 to-yellow-600"
+            }, {
+              label: "Total Stock", value: getTotalStockQuantity(), icon: <FaWarehouse />, bg: "from-purple-400 to-purple-600"
+            }].map(({ label, value, icon, bg }) => (
+              <div key={label} className={`bg-gradient-to-br ${bg} p-6 rounded-lg shadow-lg text-white`}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-white text-sm">{label}</p>
+                    <h3 className="text-3xl font-bold mt-1">{value}</h3>
+                  </div>
+                  <div className="text-4xl opacity-80">{icon}</div>
                 </div>
-                <span>{label}</span>
-                <h3 className="text-3xl font-bold mt-1">{value}</h3>
               </div>
             ))}
           </div>
 
-          {/* Orders & Revenue */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-            <div className="bg-blue-100 rounded p-4 border-l-4 border-blue-600 font-semibold text-blue-900 flex flex-col items-center justify-center cursor-default animate-shadowPulse">
-              <p>Total Orders This Year</p>
-              <h3 className="text-2xl font-bold mt-1">{animatedTotals.orders}</h3>
-            </div>
-            <div className="bg-yellow-100 rounded p-4 border-l-4 border-yellow-500 font-semibold text-yellow-900 flex flex-col items-center justify-center cursor-default animate-shadowPulse">
-              <p>Total Revenue</p>
-              <h3 className="text-2xl font-bold mt-1">PKR {animatedTotals.revenue.toLocaleString()}</h3>
-            </div>
-            <div className="bg-white rounded p-4 shadow-inner cursor-default select-none">
-              <p className="font-semibold mb-2">Recent Orders</p>
-              <ul className="text-sm space-y-1">
-                {data.recent_orders.map(({ id, product, quantity, status }) => (
-                  <li key={id} className="flex justify-between">
-                    <span>
-                      {product} x {quantity}
-                    </span>
-                    <span
-                      className={`font-semibold ${
-                        status === "Cancelled" ? "text-red-600" : "text-green-600 animate-pulse"
-                      }`}
-                    >
-                      {status}
-                    </span>
+          {/* Orders List */}
+          {recentOrders.length > 0 && (
+            <div className="bg-white p-6 rounded-lg shadow mt-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-800">Recent Orders</h3>
+              <ul className="space-y-2">
+                {recentOrders.map((order) => (
+                  <li key={order._id} className="border p-2 rounded flex justify-between">
+                    <span>Order #{order._id}</span>
+                    <span>{order.status}</span>
                   </li>
                 ))}
               </ul>
             </div>
-          </div>
+          )}
 
-          {/* Graphs */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-            {/* Monthly Sales Bar Chart */}
-            <div className="bg-white rounded p-4 shadow-inner">
-              <p className="font-semibold mb-2">Monthly Sales - {selectedMonth}</p>
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={data.monthly_sales[selectedMonth]}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="day" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="revenue" fill="#34d399" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Stock Status Pie Chart */}
-            <div className="bg-white rounded p-4 shadow-inner flex flex-col items-center justify-center">
-              <p className="font-semibold mb-2">Stock Status</p>
-
-              {/* Legends with percentages */}
-              <div className="flex gap-4 mb-2 text-sm">
-                {stockStatusPercent.map((item, index) => (
-                  <div key={index} className="flex items-center gap-1">
-                    <span
-                      className={`w-3 h-3 inline-block rounded-full`}
-                      style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                    ></span>
-                    <span>
-                      {item.name} - {item.value} ({((item.value / totalStock) * 100).toFixed(1)}%)
-                    </span>
+          {/* Products by Category */}
+          {Object.keys(productsByCategory).length > 0 && (
+            <div className="bg-white p-6 rounded-lg shadow mt-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-800">Products by Category</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {Object.entries(productsByCategory).map(([category, count]) => (
+                  <div key={category} className="bg-green-50 border border-green-200 p-4 rounded-lg text-center">
+                    <p className="text-gray-600 text-sm">{category}</p>
+                    <h3 className="text-3xl font-bold text-green-700 mt-1">{count}</h3>
                   </div>
                 ))}
               </div>
-
-              <ResponsiveContainer width="100%" height={250}>
-                <PieChart>
-                  <Pie
-                    data={stockStatusPercent}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    label
-                  >
-                    {stockStatusPercent.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
             </div>
+          )}
+
+          {/* Orders by Status Bar Chart */}
+          <div className="bg-white p-6 rounded-lg shadow mt-6">
+            <h3 className="text-xl font-semibold mb-4 text-gray-800">Orders by Status</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={ordersByStatus}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="status" />
+                <YAxis />
+                <Tooltip formatter={(value) => new Intl.NumberFormat().format(value)} />
+                <Bar dataKey="count" fill="#4ade80" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Stock Status Pie Chart */}
+          <div className="bg-white p-6 rounded-lg shadow mt-6">
+            <h3 className="text-xl font-semibold mb-4 text-gray-800">Stock Status</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={stockStatus}
+                  dataKey="quantity"
+                  nameKey="status"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                >
+                  {stockStatus.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </main>
