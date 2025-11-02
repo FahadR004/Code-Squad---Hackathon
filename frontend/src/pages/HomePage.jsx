@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 export default function Home() {
   const { t, i18n } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // -----------------------------
   // Image Slider Data
@@ -30,7 +31,7 @@ export default function Home() {
   }, [slides.length]);
 
   // -----------------------------
-  // Load language from localStorage on mount
+  // Load language from localStorage
   // -----------------------------
   useEffect(() => {
     const savedLang = localStorage.getItem("lang") || "en";
@@ -38,20 +39,17 @@ export default function Home() {
   }, [i18n]);
 
   // -----------------------------
-  // Language Toggle
+  // Language Change Handler
   // -----------------------------
-  const toggleLanguage = () => {
-    const newLang = i18n.language === "en" ? "ur" : "en";
-    i18n.changeLanguage(newLang);
-    localStorage.setItem("lang", newLang); // persist selection
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem("lang", lang);
+    setDropdownOpen(false);
   };
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center overflow-hidden">
-
-      {/* -----------------------------
-          Moving Text Bar
-      ----------------------------- */}
+      {/* Moving Text Bar */}
       <div className="w-full bg-green-600 text-white py-2 overflow-hidden sticky top-0 z-50">
         <motion.div
           className="whitespace-nowrap font-semibold text-lg"
@@ -62,80 +60,92 @@ export default function Home() {
         </motion.div>
       </div>
 
-      {/* -----------------------------
-          Main Content: Text + Image Slider
-      ----------------------------- */}
-      <div className="flex flex-col md:flex-row justify-between items-center w-11/12 md:w-9/12 mt-24 md:mt-32 mb-10">
+      {/* Navbar */}
+      <nav className="w-full bg-white shadow-md py-4 px-6 flex justify-between items-center z-40">
+        <div className="text-xl font-bold text-green-700">AgroMarket</div>
+        <div className="relative">
+          <button
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg shadow-md hover:bg-gray-300 transition"
+          >
+            {t("changeLanguage") || "Change Language"}
+          </button>
+          {dropdownOpen && (
+            <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
+              <button
+                onClick={() => changeLanguage("en")}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                English
+              </button>
+              <button
+                onClick={() => changeLanguage("ur")}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                Urdu
+              </button>
+            </div>
+          )}
+        </div>
+      </nav>
 
-        {/* -----------------------------
-            Left Section: Text + Buttons
-        ----------------------------- */}
+      {/* Main Content */}
+      <div className="relative w-full flex items-center justify-center min-h-screen">
+        {/* Background Image Slider */}
+        <div className="absolute inset-0 h-full w-full overflow-hidden">
+          <AnimatePresence initial={false}>
+            <motion.img
+              key={currentIndex}
+              src={slides[currentIndex]}
+              alt="Farm"
+              className="w-full h-full object-cover"
+              initial={{ x: "100%", opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: "-100%", opacity: 0 }}
+              transition={{ duration: 1.2, ease: "easeInOut" }}
+            />
+          </AnimatePresence>
+
+          {/* Dark Overlay */}
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
+
+        {/* Overlay Box */}
         <motion.div
-          className="text-center md:text-left md:w-1/2 space-y-6"
+          className="relative z-10 text-center space-y-8 px-8 py-12 max-w-3xl bg-white/75 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 -mt-16"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
         >
-          <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-green-800 to-green-400 bg-clip-text text-transparent drop-shadow-lg leading-tight">
-            {t("welcome") || "Welcome to"} <span className="text-green-700">AgroLink</span>
+          <h1 className="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-green-800 to-green-400 bg-clip-text text-transparent drop-shadow-lg leading-tight">
+             Welcome to {" "}
+            <span className="text-green-700">AgroMarket</span>
           </h1>
-          <p className="text-gray-700 text-lg leading-relaxed">
-            {t("description") || "We are creating a platform where farmers can plant and sell directly to buyers online. Our goal is to connect buyers and farmers for a transparent and efficient marketplace."}
+          <p className="text-gray-800 text-xl leading-relaxed font-medium">
+            {t("description") ||
+              "We are creating a platform where farmers can plant and sell directly to buyers online. Our goal is to connect buyers and farmers for a transparent and efficient marketplace."}
           </p>
 
           {/* Login / Signup Buttons */}
-          <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-4">
+          <div className="flex flex-wrap justify-center gap-6 mt-8">
             <Link to="/pages/auth/login">
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                className="bg-green-500 text-white px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-green-600 transition"
+                whileHover={{ scale: 1.1, boxShadow: "0 10px 20px rgba(0,0,0,0.2)" }}
+                className="bg-green-500 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:bg-green-600 transition-all duration-300"
               >
                 {t("login") || "Login"}
               </motion.button>
             </Link>
             <Link to="/pages/auth/signup">
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                className="bg-lime-400 text-green-800 px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-lime-500 transition"
+                whileHover={{ scale: 1.1, boxShadow: "0 10px 20px rgba(0,0,0,0.2)" }}
+                className="bg-lime-400 text-green-800 px-8 py-3 rounded-full font-semibold shadow-lg hover:bg-lime-500 transition-all duration-300"
               >
                 {t("signup") || "Sign Up"}
               </motion.button>
             </Link>
           </div>
         </motion.div>
-
-        {/* -----------------------------
-            Right Section: Image Slider + Language Button
-        ----------------------------- */}
-        <div className="relative w-full md:w-1/2 mt-14 md:mt-0">
-
-          {/* Language Button */}
-          <div className="flex justify-end mb-2">
-            <button
-              onClick={toggleLanguage}
-              className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg shadow-md hover:bg-gray-300 transition"
-            >
-              {t("changeLanguage") || "Change Language"}
-            </button>
-          </div>
-
-          {/* Image Slider */}
-          <div className="relative h-64 md:h-80 overflow-hidden rounded-xl shadow-lg">
-            <AnimatePresence initial={false}>
-              <motion.img
-                key={currentIndex}
-                src={slides[currentIndex]}
-                alt="Farm"
-                className="absolute w-full h-full object-cover rounded-xl"
-                initial={{ x: "100%", opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: "-100%", opacity: 0 }}
-                transition={{ duration: 1.2, ease: "easeInOut" }}
-              />
-            </AnimatePresence>
-          </div>
-        </div>
-
       </div>
     </div>
   );
