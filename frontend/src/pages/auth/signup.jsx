@@ -13,6 +13,7 @@ export default function Signup() {
     confirmPassword: "",
     phone_no: "",
     role: "buyer",
+    address: "",
     language: "en",
   });
 
@@ -20,7 +21,7 @@ export default function Signup() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // ✅ Load saved language from localStorage on mount
+  // Load saved language from localStorage on mount
   useEffect(() => {
     const savedLang = localStorage.getItem("lang");
     if (savedLang) {
@@ -33,8 +34,8 @@ export default function Signup() {
   setFormData({ ...formData, [e.target.name]: e.target.value });
 
   if (e.target.name === "language") {
-    i18n.changeLanguage(e.target.value);      // immediately change language
-    localStorage.setItem("lang", e.target.value); // save selection
+    i18n.changeLanguage(e.target.value);
+    localStorage.setItem("lang", e.target.value);
   }
 };
 
@@ -42,15 +43,12 @@ export default function Signup() {
  const handleSubmit = async (e) => {
   e.preventDefault();
   setError("");
-      console.log(formData);
 
   // Validate password match
   if (formData.password !== formData.confirmPassword) {
     setError(t("passwordMismatch"));
     return;
   }
-
-  formData.address = 'Address';
 
   // Validate required fields
   if (!formData.name || !formData.email || !formData.password || !formData.phone_no || !formData.address || !formData.role) {
@@ -83,30 +81,22 @@ export default function Signup() {
 
     setLoading(false);
 
-    // // Show success message (optional - you can use a toast library)
-    // Toast
-
-    // Redirect to login or dashboard
     navigate("/pages/auth/login");
 
   } catch (err) {
     setLoading(false);
 
-    // Handle different error scenarios
-    if (err.response) {
-      // Server responded with error
-      setError(err.response.data.message || "Registration failed");
-    } else if (err.request) {
-      // Request made but no response
-      setError("Network error. Please check your connection.");
-    } else {
-      // Something else happened
-      setError("An unexpected error occurred. Please try again.");
-    }
+      if (err.response) {
+        setError(err.response.data.message || "Registration failed");
+      } else if (err.request) {
+        setError("Network error. Please check your connection.");
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
 
-    console.error("Registration error:", err);
-  }
-};
+      console.error("Registration error:", err);
+    }
+  };
 
   return (
     <div
@@ -179,7 +169,7 @@ export default function Signup() {
                 />
               </div>
 
-              {/* Password */}
+              {/* Password & Confirm */}
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label htmlFor="password" className="block text-xs font-medium text-gray-800 mb-1">
@@ -214,9 +204,9 @@ export default function Signup() {
                 </div>
               </div>
 
-              {/* Role & Language */}
-              <div className="flex gap-2">
-                <div className="flex-1">
+              {/* Role, Address & Language */}
+              <div className="grid grid-cols-2 gap-2">
+                <div>
                   <label className="block text-xs font-medium text-gray-800 mb-1">{t("role")}</label>
                   <select
                     name="role"
@@ -229,11 +219,25 @@ export default function Signup() {
                   </select>
                 </div>
 
-                <div className="flex-1">
+                <div>
+                  <label className="block text-xs font-medium text-gray-800 mb-1">{t("address")}</label>
+                  <input
+                    id="address"
+                    name="address"
+                    type="text"
+                    value={formData.address}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+                    placeholder="Enter your address"
+                  />
+                </div>
+
+                <div>
                   <label className="block text-xs font-medium text-gray-800 mb-1">{t("language")}</label>
                   <select
                     name="language"
-                    value={formData.language}
+                    value={formData.language || "en"}
                     onChange={handleChange}
                     className="w-full border border-gray-300 rounded-lg px-2 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
                   >

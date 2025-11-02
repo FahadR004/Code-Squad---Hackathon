@@ -7,5 +7,5 @@ import "./i18n"; // Import i18n config
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />
-  </StrictMode>
-);
+  </StrictMode>,
+)

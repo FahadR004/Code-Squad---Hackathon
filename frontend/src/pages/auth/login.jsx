@@ -52,7 +52,7 @@ const handleSubmit = async (e) => {
 
   } catch (err) {
     setLoading(false);
-    console.log(err, 'ERROR ')
+
     if (err.response) {
       const status = err.response.status;
       const message = err.response.data.message;
