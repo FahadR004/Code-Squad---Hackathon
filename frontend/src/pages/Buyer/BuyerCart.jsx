@@ -1,29 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import { FaTrash, FaShoppingCart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useCart } from "../../contexts/CartContext";
 
 export default function BuyerCart() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState([
-    { id: 1, name: "Fresh Tomatoes", price: 250, quantity: 2 },
-    { id: 2, name: "Bananas", price: 220, quantity: 3 },
-  ]);
 
-  const handleRemove = (id) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
-  };
-
-  const handleQuantityChange = (id, delta) => {
-    setCartItems(
-      cartItems.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-          : item
-      )
-    );
-  };
+  // Get cart state and handlers from context
+  const { cartItems, removeFromCart, updateQuantity } = useCart();
 
   const totalAmount = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -53,14 +39,14 @@ export default function BuyerCart() {
                   </p>
                   <div className="mt-2 flex items-center gap-2">
                     <button
-                      onClick={() => handleQuantityChange(item.id, -1)}
+                      onClick={() => updateQuantity(item.id, -1)}
                       className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition"
                     >
                       -
                     </button>
                     <span className="px-2 py-1 border rounded">{item.quantity}</span>
                     <button
-                      onClick={() => handleQuantityChange(item.id, 1)}
+                      onClick={() => updateQuantity(item.id, 1)}
                       className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition"
                     >
                       +
@@ -72,7 +58,7 @@ export default function BuyerCart() {
                     PKR {item.price * item.quantity}
                   </p>
                   <button
-                    onClick={() => handleRemove(item.id)}
+                    onClick={() => removeFromCart(item.id)}
                     className="text-red-500 hover:text-red-700 flex items-center gap-1"
                   >
                     <FaTrash /> {t("remove")}
